@@ -1,0 +1,56 @@
+name: Agent Docs
+
+on:
+  pull_request:
+    paths:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "CODEX.md"
+      - "GEMINI.md"
+      - "README.md"
+      - "TODO.md"
+      - "ROADMAP.md"
+      - "CONTRIBUTING.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".env.example"
+      - ".github/copilot-instructions.md"
+      - ".github/workflows/agent-docs.yml"
+      - ".cursor/rules/**"
+      - "docs/**"
+      - "personas/**"
+      - "Session Logs/**"
+      - "Templates/**"
+      - "scripts/check-agent-docs.ps1"
+  push:
+    branches:
+      - main
+    paths:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "CODEX.md"
+      - "GEMINI.md"
+      - "README.md"
+      - "TODO.md"
+      - "ROADMAP.md"
+      - "CONTRIBUTING.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".env.example"
+      - ".github/copilot-instructions.md"
+      - ".github/workflows/agent-docs.yml"
+      - ".cursor/rules/**"
+      - "docs/**"
+      - "personas/**"
+      - "Session Logs/**"
+      - "Templates/**"
+      - "scripts/check-agent-docs.ps1"
+
+jobs:
+  check-agent-docs:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check agent doc alignment
+        shell: pwsh
+        run: ./scripts/check-agent-docs.ps1

@@ -1,0 +1,35 @@
+---
+description: Core vibe coding agent contract for Cursor.
+alwaysApply: true
+---
+
+# Vibe Coding Core Rule
+
+Canonical source: `AGENTS.md`
+
+Follow `AGENTS.md`. This Cursor rule is intentionally self-contained enough to guide inline edits and chat work.
+
+## Alignment Markers
+
+- Think Before Coding
+- Simplicity First
+- Surgical Changes
+- Goal-Driven Execution
+- Vibe Coding Quality Bar
+
+## Core Rules
+
+- Think Before Coding: inspect context, surface assumptions, and ask when ambiguity changes implementation.
+- Simplicity First: prefer the smallest verifiable solution; avoid speculative abstractions and dependencies.
+- Surgical Changes: keep edits scoped, preserve existing style, and avoid drive-by refactors.
+- Goal-Driven Execution: define success criteria and verify changed behavior.
+- Vibe Coding Quality Bar: protect the product feeling, responsive UI, core workflows, and polish.
+
+## Cursor Behavior
+
+- Keep edits grounded in current file context and nearby project conventions.
+- Do not produce large rewrites unless explicitly requested.
+- Preserve comments and user-authored docs.
+- For UI changes, account for loading, empty, error, hover/focus, and responsive states where relevant.
+- Mention unrelated issues separately instead of silently editing them.
+- For meaningful multi-file, architecture, debugging, or handoff-heavy work, create or append a session log in `Session Logs/` using `Templates/SESSION_LOG_TEMPLATE.md`.
