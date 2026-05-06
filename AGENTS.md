@@ -20,6 +20,7 @@ When this file changes, update the adapters and run:
 
 - Project name: `TODO`
 - Project type: `TODO`
+- Primary agent: `TODO`
 - Primary user: `TODO`
 - Current stage: `prototype | active build | maintenance | archived`
 - Product owner persona: `personas/head-of-product-vibe-coding.md`
@@ -159,6 +160,26 @@ If verification cannot be run, say exactly why and describe the residual risk.
 - Medium-term direction lives in `ROADMAP.md`.
 - Reusable role prompts live in `personas/`.
 - Session logs live in `Session Logs/` and use `Templates/SESSION_LOG_TEMPLATE.md`.
+- Slash commands live in `.claude/commands/` and are invoked with `/command-name` in Claude Code.
+
+## Slash Commands
+
+These commands are available when working in Claude Code. Invoke them with `/command-name`.
+
+- `/brief` — load and summarize current project context from `AGENTS.md` and `docs/PROJECT_BRIEF.md`.
+- `/spec` — draft a feature spec (goal, scope, acceptance criteria, approach, risks) before writing any code.
+- `/council` — run a persona council review on a task or question using `personas/agent-council-protocol.md`.
+- `/review` — review recent changes through the Code Reviewer and QA Acceptance Tester lenses.
+- `/session-log` — create or append a session log entry in `Session Logs/`.
+- `/todo-triage` — sort `TODO.md` into Now / Soon / Parking lot with success criteria and first actions.
+- `/retro` — end-of-session retrospective; surfaces what to codify in `AGENTS.md` and what to add to `TODO.md`.
+
+## Optional Workflow Protocols
+
+These protocols are available for specific situations. They are not the default operating mode.
+
+- **Ralph loop** (`docs/RALPH_LOOP.md`) — autonomous iteration for bounded tasks with a clear definition of done. Use for: fix all tests, implement a fully spec'd feature, migrate a pattern across the repo. Requires a commit checkpoint before starting and a diff review when done.
+- **RIPER** (`docs/RIPER_WORKFLOW.md`) — phase-gated workflow enforcing Research → Innovate → Plan → Execute → Review in sequence. Use when jumping straight into code on a complex task has burned you before. Invoke by telling Claude to follow RIPER for a specific task.
 
 ## Agent Coordination
 
