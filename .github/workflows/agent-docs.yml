@@ -13,6 +13,7 @@ on:
       - "CONTRIBUTING.md"
       - "CHANGELOG.md"
       - "LICENSE"
+      - "VERSION"
       - ".env.example"
       - ".github/copilot-instructions.md"
       - ".github/workflows/agent-docs.yml"
@@ -21,7 +22,7 @@ on:
       - "personas/**"
       - "Session Logs/**"
       - "Templates/**"
-      - "scripts/check-agent-docs.ps1"
+      - "scripts/**"
   push:
     branches:
       - main
@@ -36,6 +37,7 @@ on:
       - "CONTRIBUTING.md"
       - "CHANGELOG.md"
       - "LICENSE"
+      - "VERSION"
       - ".env.example"
       - ".github/copilot-instructions.md"
       - ".github/workflows/agent-docs.yml"
@@ -44,13 +46,43 @@ on:
       - "personas/**"
       - "Session Logs/**"
       - "Templates/**"
-      - "scripts/check-agent-docs.ps1"
+      - "scripts/**"
 
 jobs:
-  check-agent-docs:
+  check-agent-docs-pwsh:
+    name: Drift check (pwsh, windows-latest)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check agent doc alignment
+      - name: Run PowerShell drift check
         shell: pwsh
         run: ./scripts/check-agent-docs.ps1
+
+  check-agent-docs-bash:
+    name: Drift check (bash, ubuntu-latest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run bash drift check
+        run: |
+          chmod +x ./scripts/check-agent-docs.sh
+          ./scripts/check-agent-docs.sh
+
+  test-init-pwsh:
+    name: Init smoke test (pwsh, windows-latest)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run PowerShell init smoke test
+        shell: pwsh
+        run: ./scripts/test-init.ps1
+
+  test-init-bash:
+    name: Init smoke test (bash, ubuntu-latest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run bash init smoke test
+        run: |
+          chmod +x ./scripts/test-init.sh
+          ./scripts/test-init.sh

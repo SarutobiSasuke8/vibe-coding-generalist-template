@@ -20,6 +20,8 @@ Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.
 - **One operating contract** -- `AGENTS.md` is canonical; `CLAUDE.md` / `CODEX.md` / `GEMINI.md` / `.github/copilot-instructions.md` / `.cursor/rules/vibe-coding-core.mdc` are thin tool-specific adapters that point at it.
 - **Persona council** -- 11 reusable role prompts (Product, CTO, QA + 8 optional) and an orchestration protocol so multi-perspective work produces one synthesized report instead of eleven.
 - **Project context** -- `docs/PROJECT_BRIEF.md` for the durable "what is this for" doc; see [`docs/examples/PROJECT_BRIEF.example.md`](docs/examples/PROJECT_BRIEF.example.md) for what filled-in looks like.
+- **Product philosophy** -- [`docs/WHY.md`](docs/WHY.md) explains why the template exists and what problem it solves.
+- **Release spine** -- `VERSION`, [`CHANGELOG.md`](CHANGELOG.md), and [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) define the path to a trustworthy public template release.
 - **Session memory** -- append-only `Session Logs/` with a template, index, and clear "when to log" rule.
 - **Drift check** -- `scripts/check-agent-docs.ps1` and `.sh` enforce that adapters stay slim, required headings exist, and (in strict mode) placeholders are replaced. CI runs both on every PR.
 - **Claude Code scaffolding** -- `.claude/settings.json` with read-only Bash defaults plus slash commands `/brief`, `/spec`, `/council`, `/review`, `/session-log`, `/drift-check`, `/handoff`, `/todo-triage`, `/retro`.
@@ -30,6 +32,8 @@ Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.
 - Read `AGENTS.md` first. It owns the principles, operating loop, and handoff standard.
 - Edit `AGENTS.md` to change agent behavior; adapters only carry tool-specific guidance and stay under 80 lines (drift check enforces this).
 - Project context lives in `docs/PROJECT_BRIEF.md`. Read the example before writing your own.
+- The public philosophy lives in `docs/WHY.md`; the future CLI split is tracked in `docs/CLI_ROADMAP.md`.
+- Release readiness lives in `VERSION`, `CHANGELOG.md`, and `docs/RELEASE_CHECKLIST.md`.
 - Multi-persona reviews use `personas/agent-council-protocol.md`.
 - Meaningful sessions get a log under `Session Logs/`. See `docs/SESSION_LOGGING.md`.
 
@@ -37,7 +41,7 @@ Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.
 
 **Slash commands** are repo-local `.md` files in `.claude/commands/`. They run in Claude Code exactly as written and are checked into the repo, so every fork gets them automatically.
 
-**Skills** are Anthropic-hosted scripts that Claude Code loads on invocation. They appear in the available-skills list in Claude Code's context. Many overlap in name with slash commands — when both exist, they point at the same underlying `.claude/commands/` file.
+**Skills** are Anthropic-hosted scripts that Claude Code loads on invocation. They appear in the available-skills list in Claude Code's context. Many overlap in name with slash commands - when both exist, they point at the same underlying `.claude/commands/` file.
 
 Commands in this template:
 
@@ -78,6 +82,7 @@ Add new commands by dropping a `.md` file in `.claude/commands/`. Keep commands 
 +-- Session Logs/                  # Append-only session memory
 +-- Templates/                     # Session log template
 +-- AGENTS.md                      # Canonical agent contract
++-- VERSION                        # Template release version
 +-- CLAUDE.md / CODEX.md / GEMINI.md
 `-- README.md / ROADMAP.md / TODO.md / CHANGELOG.md / LICENSE
 ```

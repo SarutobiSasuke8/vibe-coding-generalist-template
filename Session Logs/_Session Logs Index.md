@@ -23,7 +23,7 @@ Small one-line fixes do not need a session log unless the user asks.
 
 ## Logs
 
-- [Sample - Template Setup](2026-05-03-session-log-vibe-coding-template-optimization.md)
+Actual session logs are local-only by default and ignored by Git. Use this public index for the logging rule, current themes, and non-sensitive pointers only.
 
 ## Current Themes
 

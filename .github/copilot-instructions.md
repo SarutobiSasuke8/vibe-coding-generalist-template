@@ -2,17 +2,17 @@
 
 Canonical source: `AGENTS.md`
 
-Follow `AGENTS.md`. This file is intentionally self-contained enough to guide Copilot suggestions in editors and pull requests.
+Follow `AGENTS.md`. This file holds Copilot-specific guidance only; the canonical principles live in `AGENTS.md`.
 
 ## Alignment Markers
 
-- Think Before Coding
-- Simplicity First
-- Surgical Changes
-- Goal-Driven Execution
-- Vibe Coding Quality Bar
+- **Think Before Coding** — surface assumptions in comments or PR notes when ambiguity matters.
+- **Simplicity First** — avoid speculative abstractions, configuration, and features.
+- **Surgical Changes** — touch only the code needed for the requested behavior.
+- **Goal-Driven Execution** — suggest tests or checks alongside behavior changes.
+- **Vibe Coding Quality Bar** — keep UI suggestions polished, accessible, responsive, and aligned with `docs/PROJECT_BRIEF.md`.
 
-## Core Rules
+## Copilot Behavior
 
 - Prefer existing code style, file organization, and naming.
 - Keep suggestions small and relevant to the current file or task.
@@ -20,15 +20,6 @@ Follow `AGENTS.md`. This file is intentionally self-contained enough to guide Co
 - Do not introduce new dependencies without a clear reason.
 - Preserve comments and user-authored text unless the task requires editing them.
 - Add comments only for non-obvious logic.
-- Preserve session logging files and templates when changing project workflow docs.
-
-## Coding Principles
-
-- Think Before Coding: surface assumptions in comments or PR notes when ambiguity matters.
-- Simplicity First: avoid speculative abstractions, config, and features.
-- Surgical Changes: touch only the code needed for the requested behavior.
-- Goal-Driven Execution: suggest tests or checks with behavior changes.
-- Vibe Coding Quality Bar: keep UI suggestions polished, accessible, responsive, and aligned with the project brief.
 
 ## Tests and Verification
 
@@ -36,4 +27,4 @@ Follow `AGENTS.md`. This file is intentionally self-contained enough to guide Co
 - Keep tests focused on the changed behavior.
 - Prefer concrete acceptance checks over vague "works" language.
 - Do not remove tests unless they are replaced or explicitly obsolete.
-- If a PR changes major behavior or architecture, update or request a session log in `Session Logs/`.
+- For PRs that change major behavior or architecture, link or request a session log in `Session Logs/`.

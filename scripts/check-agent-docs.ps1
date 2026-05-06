@@ -1,5 +1,6 @@
 param(
-    [switch]$Strict
+    [switch]$Strict,
+    [int]$AdapterMaxLines = 80
 )
 
 $ErrorActionPreference = "Stop"
@@ -14,33 +15,42 @@ $requiredFiles = @(
     ".github/copilot-instructions.md",
     ".cursor/rules/vibe-coding-core.mdc",
     "docs/AGENT_ALIGNMENT.md",
+    "docs/CLI_ROADMAP.md",
     "docs/AGENT_OPERATING_PRINCIPLES.md",
     "docs/PERSONA_COUNCIL.md",
     "docs/PROJECT_BRIEF.md",
+    "docs/RELEASE_CHECKLIST.md",
     "docs/SETUP_CHECKLIST.md",
     "docs/SESSION_LOGGING.md",
+    "docs/WHY.md",
     "TODO.md",
     "ROADMAP.md",
     "README.md",
     "CONTRIBUTING.md",
     "CHANGELOG.md",
     "LICENSE",
+    "VERSION",
     ".env.example",
     "Session Logs/_Session Logs Index.md",
     "Templates/SESSION_LOG_TEMPLATE.md",
     "personas/README.md",
     "personas/agent-council-protocol.md",
-    "personas/aegis-defensive-security.md",
-    "personas/code-reviewer-maintainability.md",
     "personas/head-of-product-vibe-coding.md",
     "personas/cto-vibe-coding.md",
-    "personas/data-analytics-lead.md",
-    "personas/delivery-lead.md",
-    "personas/design-director-vibe-coding.md",
-    "personas/growth-launch-strategist.md",
-    "personas/ops-deployment-engineer.md",
-    "personas/qa-acceptance-tester.md",
-    "personas/research-scout.md"
+    "personas/qa-acceptance-tester.md"
+)
+
+# Personas that init.ps1 can demote to personas/optional/ when the user picks
+# the minimal tier. The drift-check accepts either location.
+$optionalPersonas = @(
+    "aegis-defensive-security.md",
+    "code-reviewer-maintainability.md",
+    "data-analytics-lead.md",
+    "delivery-lead.md",
+    "design-director-vibe-coding.md",
+    "growth-launch-strategist.md",
+    "ops-deployment-engineer.md",
+    "research-scout.md"
 )
 
 $adapterFiles = @(
@@ -103,6 +113,14 @@ $forbiddenTemplatePhrases = @(
     "C:\Users"
 )
 
+# Files exempt from the strict placeholder scan: example files and templates
+# are SUPPOSED to contain placeholders/TODOs.
+$strictExemptPatterns = @(
+    "docs/examples/",
+    "Templates/",
+    "personas/optional/"
+)
+
 $errors = New-Object System.Collections.Generic.List[string]
 
 function Get-RepoContent {
@@ -114,10 +132,27 @@ function Get-RepoContent {
     return Get-Content -Raw -LiteralPath $path
 }
 
+function Test-StrictExempt {
+    param([string]$RelativePath)
+    $normalized = $RelativePath -replace '\\','/'
+    foreach ($pat in $strictExemptPatterns) {
+        if ($normalized -like "*$pat*") { return $true }
+    }
+    return $false
+}
+
 foreach ($file in $requiredFiles) {
     $path = Join-Path $root $file
     if (-not (Test-Path -LiteralPath $path)) {
         $errors.Add("Missing required file: $file")
+    }
+}
+
+foreach ($persona in $optionalPersonas) {
+    $core = Join-Path $root "personas/$persona"
+    $optional = Join-Path $root "personas/optional/$persona"
+    if (-not ((Test-Path -LiteralPath $core) -or (Test-Path -LiteralPath $optional))) {
+        $errors.Add("Missing optional persona (must live in personas/ or personas/optional/): $persona")
     }
 }
 
@@ -144,6 +179,14 @@ if ($null -ne $briefContent) {
     }
 }
 
+$versionContent = Get-RepoContent "VERSION"
+if ($null -ne $versionContent) {
+    $trimmedVersion = $versionContent.Trim()
+    if ($trimmedVersion -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') {
+        $errors.Add("VERSION must contain a semantic version like 0.1.0")
+    }
+}
+
 foreach ($file in $adapterFiles) {
     $content = Get-RepoContent $file
     if ($null -eq $content) {
@@ -156,8 +199,15 @@ foreach ($file in $adapterFiles) {
         }
     }
 
-    if ($content.Length -lt 900) {
+    if ($content.Length -lt 600) {
         $errors.Add("Adapter appears too thin to be self-contained: $file")
+    }
+
+    # Adapters should stay slim - tool-specific guidance only, not a full
+    # restatement of AGENTS.md. Cap configurable via -AdapterMaxLines.
+    $lineCount = ($content -split "`n").Count
+    if ($lineCount -gt $AdapterMaxLines) {
+        $errors.Add("Adapter exceeds line cap ($lineCount > $AdapterMaxLines): $file. Trim to tool-specific guidance; canonical principles live in AGENTS.md.")
     }
 
     foreach ($phrase in $forbiddenAdapterPhrases) {
@@ -167,7 +217,7 @@ foreach ($file in $adapterFiles) {
     }
 }
 
-$personaFiles = Get-ChildItem -LiteralPath (Join-Path $root "personas") -File -Filter "*.md" -ErrorAction SilentlyContinue
+$personaFiles = Get-ChildItem -LiteralPath (Join-Path $root "personas") -File -Filter "*.md" -Recurse -ErrorAction SilentlyContinue
 foreach ($file in $personaFiles) {
     $content = Get-Content -Raw -LiteralPath $file.FullName
     foreach ($phrase in $forbiddenTemplatePhrases) {
@@ -183,7 +233,7 @@ $portableTemplateFiles = @(
     "AGENTS.md",
     "docs",
     "personas",
-    "Session Logs",
+    "Session Logs/_Session Logs Index.md",
     "Templates"
 )
 
@@ -209,20 +259,53 @@ foreach ($item in $portableTemplateFiles) {
     }
 }
 
+# Session log index references must resolve to actual files in Session Logs/.
+$indexPath = Join-Path $root "Session Logs/_Session Logs Index.md"
+if (Test-Path -LiteralPath $indexPath) {
+    $indexContent = Get-Content -Raw -LiteralPath $indexPath
+    $linkMatches = [regex]::Matches($indexContent, '\]\(([^)]+\.md)\)')
+    foreach ($m in $linkMatches) {
+        $target = $m.Groups[1].Value
+        if ($target -match '^https?://') { continue }
+        $resolved = Join-Path (Split-Path -Parent $indexPath) $target
+        if (-not (Test-Path -LiteralPath $resolved)) {
+            $errors.Add("Session log index references missing file: $target")
+        }
+    }
+}
+
 if ($Strict) {
+    # Strict mode: any file forkers are expected to fill in must have its
+    # placeholders replaced before shipping.
     $strictFiles = @(
         "AGENTS.md",
         "docs/PROJECT_BRIEF.md",
-        "README.md"
+        "README.md",
+        "CLAUDE.md",
+        "CODEX.md",
+        "GEMINI.md",
+        "ROADMAP.md",
+        "TODO.md"
     )
+
+    # Plus every file under docs/ except exempt subtrees.
+    $docFiles = Get-ChildItem -LiteralPath (Join-Path $root "docs") -Recurse -File -Filter "*.md" -ErrorAction SilentlyContinue
+    foreach ($f in $docFiles) {
+        $rel = $f.FullName.Substring($root.Length).TrimStart('\','/').Replace('\','/')
+        if (Test-StrictExempt $rel) { continue }
+        if ($strictFiles -notcontains $rel) { $strictFiles += $rel }
+    }
 
     foreach ($file in $strictFiles) {
         $content = Get-RepoContent $file
-        if ($null -eq $content) {
-            continue
-        }
-        if ($content -match "(?m)^\s*(TODO:|TODO\s*$|-\s*TODO\b|\|\s*TODO\b)") {
+        if ($null -eq $content) { continue }
+        if (Test-StrictExempt $file) { continue }
+        $todoPlaceholderPattern = "(?m)(^\s*(TODO:|TODO\s*$|[-*]\s*TODO(?=[:\s]|$)|\d+\.\s*TODO(?=[:\s]|$))|^\s*(?:[-*]\s*)?[^:\r\n]+:\s*(`TODO`|TODO)\s*$|\|\s*TODO\s*(?=\|))"
+        if ($content -match $todoPlaceholderPattern) {
             $errors.Add("Strict mode: unresolved TODO placeholder in $file")
+        }
+        if ($content -match "\{\{[^}]+\}\}") {
+            $errors.Add("Strict mode: unresolved {{...}} placeholder in $file")
         }
     }
 }
@@ -240,3 +323,4 @@ if ($Strict) {
 } else {
     Write-Host "Agent docs are aligned." -ForegroundColor Green
 }
+exit 0

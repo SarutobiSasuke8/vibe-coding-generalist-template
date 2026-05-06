@@ -2,75 +2,35 @@
 
 Canonical source: `AGENTS.md`
 
-Codex must follow `AGENTS.md`. This file is intentionally self-contained so Codex has the operating rules even when only this file is loaded.
+Codex must follow `AGENTS.md`. This file holds Codex-specific guidance only; the principles, operating loop, commands, and handoff standard live in `AGENTS.md`.
 
 ## Alignment Markers
 
-- Think Before Coding
-- Simplicity First
-- Surgical Changes
-- Goal-Driven Execution
-- Vibe Coding Quality Bar
+Codex is bound by all five principles defined in `AGENTS.md`:
 
-## Mission
-
-Implement useful, reliable, polished changes with minimal blast radius. Move from context to code to verification without inventing extra scope.
-
-## 1. Think Before Coding
-
-- Inspect relevant files before editing.
-- State assumptions when they affect the implementation.
-- Ask only when ambiguity materially changes the path.
-- Surface tradeoffs when multiple options are plausible.
-- Push back on overcomplicated or vibe-breaking requests.
-
-## 2. Simplicity First
-
-- Prefer existing project patterns.
-- Avoid speculative abstractions and unused configuration.
-- Add dependencies only when they clearly reduce complexity or risk.
-- Keep APIs and state shape narrow.
-- Simplify before handing off if the solution became bigger than the problem.
-
-## 3. Surgical Changes
-
-- Use scoped, patch-based edits.
-- Do not reformat unrelated code.
-- Do not delete or rename unrelated files.
-- Preserve comments and user-authored text unless editing them is required.
-- Clean up only artifacts introduced by your own changes.
-
-## 4. Goal-Driven Execution
-
-- Define success criteria for non-trivial changes.
-- Bug fix: identify or reproduce the failure first when practical.
-- Feature: verify the user-visible workflow.
-- Refactor: verify unchanged behavior.
-- Docs/scripts: verify paths, commands, and output.
-
-## 5. Vibe Coding Quality Bar
-
-- Protect the product feeling described in `docs/PROJECT_BRIEF.md`.
-- For frontend work, check responsive layout, interaction states, and real rendering when practical.
-- Favor complete core flows over scattered feature fragments.
-- Treat loading, empty, and error states as part of the feature.
+- **Think Before Coding** — inspect files first, surface assumptions, ask only when ambiguity materially changes the path.
+- **Simplicity First** — prefer existing patterns; no speculative abstractions, no unrequested configurability.
+- **Surgical Changes** — patch-based, scoped edits; no reformatting or renaming unrelated code.
+- **Goal-Driven Execution** — define success criteria, verify the user-visible workflow.
+- **Vibe Coding Quality Bar** — protect the feeling described in `docs/PROJECT_BRIEF.md`; loading/empty/error states are part of the feature.
 
 ## Required Workflow
 
-1. Inspect current state with fast search/file reads.
+1. Inspect current state with fast file/search reads.
 2. Make a short plan for multi-step work.
 3. Edit only the necessary files.
 4. Run the narrowest meaningful check.
 5. Report changed behavior, verification, and residual risk.
-6. Create or append a session log for meaningful multi-file, architectural, debugging, or handoff-heavy sessions.
+6. Append a session log under `Session Logs/` for decision-heavy or handoff sessions, using `Templates/SESSION_LOG_TEMPLATE.md`.
 
 ## Codex-Specific Emphasis
 
-- Prefer `rg`/fast search when available.
-- Use patch-based edits for manual file changes.
-- Do not leave dev servers, watchers, or background jobs running unless requested.
-- For UI work, verify the actual page when a dev server/browser is available.
-- Use `Templates/SESSION_LOG_TEMPLATE.md` and `Session Logs/` when decisions or handoff context should persist.
+- **Patch edits.** Prefer scoped patch-based edits over whole-file rewrites.
+- **Approval modes.** When running with elevated approvals, narrate destructive actions before taking them; default to read-only when ambiguous.
+- **Search.** Prefer `rg` / fast search tools when available; do not crawl the tree by hand.
+- **Background work.** Do not leave dev servers, watchers, or background jobs running unless the user explicitly asked.
+- **UI work.** When a dev server and browser are available, verify the actual page rather than relying on type-check alone.
+- **Drift check.** After editing any agent doc, run `./scripts/check-agent-docs.sh` (or the `.ps1` twin on Windows).
 
 ## Handoff Format
 

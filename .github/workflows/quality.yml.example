@@ -1,0 +1,44 @@
+# Stack-agnostic CI quality stub.
+#
+# Activation: rename this file to `quality.yml` once your project has lint,
+# typecheck, or tests to run. Until then it stays inert (.example suffix).
+#
+# Edit the `Setup` and per-step blocks for your stack. Examples are commented
+# below for Node and Python — uncomment one and delete the other.
+
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Node example ---------------------------------------------------
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+      #     cache: 'npm'
+      # - run: npm ci
+      # - run: npm run lint
+      # - run: npm run typecheck
+      # - run: npm test -- --run
+
+      # --- Python example -------------------------------------------------
+      # - uses: actions/setup-python@v5
+      #   with:
+      #     python-version: '3.12'
+      #     cache: 'pip'
+      # - run: pip install -e ".[dev]"
+      # - run: ruff check .
+      # - run: mypy .
+      # - run: pytest -q
+
+      - name: No-op (rename this file to quality.yml after wiring up your stack)
+        run: echo "Quality workflow stub - rename quality.yml.example to quality.yml and uncomment a stack."
