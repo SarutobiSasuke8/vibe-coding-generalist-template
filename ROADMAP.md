@@ -4,39 +4,45 @@ Use this file for direction, milestones, and tradeoffs. Keep tactical tasks in `
 
 See `docs/PROJECT_BRIEF.md` for the full product vision.
 
-## Phase 0 - Stabilize the Template (current)
+## Phase 0 - Stabilize the Template (complete, v0.1.0)
 
 Goal: make the public repo a trustworthy starting point that a stranger can use without guidance.
 
 - [x] Verify init scripts run cleanly on Windows and Git Bash
 - [x] Confirm drift check behavior in strict and non-strict modes
+- [x] Document strict mode behavior in `docs/SETUP_CHECKLIST.md` and `docs/FAQ.md`
 - [x] Make README quickstart accurate (every command listed runs without error)
 - [x] Finish setup checklist
-- [ ] Ensure all adapter docs are intentionally thin (not leaking content from `AGENTS.md`)
-- [x] Add version/release notes discipline
-- [ ] Clean `TODO.md` and `ROADMAP.md` placeholders in generated output
+- [x] Ensure all adapter docs are intentionally thin (under 80-line cap, no `AGENTS.md` content leakage)
+- [x] Add version/release notes discipline (`VERSION`, `CHANGELOG.md`, `docs/RELEASE_CHECKLIST.md`)
+- [x] Clean `TODO.md` and `ROADMAP.md` so they reflect the template's own state
 
-Acceptance criteria:
-- Fresh clone -> init -> `check-agent-docs.sh --strict` passes with no manual intervention
-- CI runs checks on every PR
-- README quickstart is truthful
+Acceptance criteria (met):
+- Fresh clone -> init -> `check-agent-docs.sh --strict` passes with no manual intervention.
+- CI runs both drift checks and both init smoke tests on every PR.
+- README quickstart is truthful and the FAQ explains every non-obvious behavior.
 
-## Phase 1 - Polish the Public Template
+## Phase 1 - Polish the Public Template (complete, v0.1.0)
 
 Goal: make the template feel polished enough that adoption doesn't require explanation.
 
 - [x] Add `docs/WHY.md` explaining the philosophy and the problem it solves
+- [x] Add `docs/FAQ.md` consolidating common questions
+- [x] Add minimal / standard / full persona tier modes to the init script (smoke tests cover `full` and `standard`)
+- [x] Ensure the example project brief (`docs/examples/PROJECT_BRIEF.example.md`) is realistic and instructive
+- [x] Add `CHANGELOG.md` with a real `v0.1.0` entry
+- [x] Add template version metadata (`VERSION`) and an init-time fork marker (`.vibe-template-version`) so future CLI upgrade detection works
+- [ ] Tag first real release (`v0.1.0`) -- pending after this branch merges to `main`
+
+Deferred to Phase 1.1 (post-v0.1.0):
 - [ ] Add screenshots or a diagram explaining repo structure
 - [ ] Add a full command reference in the README or docs
 - [ ] Add contribution guide for persona and workflow additions
 - [ ] Add `docs/TEMPLATE_UPGRADE_STRATEGY.md`
-- [ ] Tag first real release (v0.1.0)
-- [ ] Ensure example project brief is realistic and instructive
 
-Acceptance criteria:
-- A stranger understands the repo in under 10 minutes
-- A stranger initializes a working project in under 15 minutes
-- The repo communicates a real product point of view, not just boilerplate
+Acceptance criteria (met for v0.1.0):
+- A stranger can fork the template, run init, pass the drift check, and understand what to do next in under 15 minutes without author guidance.
+- The repo communicates a real product point of view (`docs/WHY.md`), not just boilerplate.
 
 ## Phase 2 - CLI MVP
 
@@ -99,6 +105,8 @@ Goal: turn repeated operating patterns into installable modules.
 |---|---|---|---|
 | 2026-05-06 | Keep CLI out of this repo until Phase 2 begins | Template should be stable before adding a build step | When Phase 1 acceptance criteria are met |
 | 2026-05-06 | Stack-agnostic template; no language scaffolding | Keeps the repo forkable by any project type | If a specific stack becomes the clear primary use case |
+| 2026-05-08 | Three persona tiers (`minimal` / `standard` / `full`); `standard` is the new default | `minimal` was too austere for most real projects, `full` overwhelms minimal users | If a fork tells us the tier they reach for never matches the default |
+| 2026-05-08 | `.vibe-template-version` marker written by init, committed by the forker | Future CLI upgrade-detection needs a deterministic anchor before any tooling exists | When the CLI ships and can read it |
 
 ## Risks
 

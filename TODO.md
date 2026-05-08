@@ -1,43 +1,43 @@
 # TODO
 
-Use this file for actionable project work. Keep items concrete.
+Use this file for actionable template work. Keep items concrete. Forks should replace this content with their own queue after running init; until then, this is the template's own working list.
 
-## Inbox
+## Now
 
-- [ ] #task Decide the public product name and positioning.
+- [ ] #task Tag the `v0.1.0` release once this branch lands on `main` (after release checklist passes).
+
+## Soon
+
+- [ ] #task Add a "screenshots or diagram of repo structure" pass to `README.md` if a stranger still has trouble orienting.
+- [ ] #task Add a contribution guide for persona and workflow additions (`CONTRIBUTING.md` is currently a stub).
+- [ ] #task Add `docs/TEMPLATE_UPGRADE_STRATEGY.md` describing how forks pick up template changes before the CLI exists.
+- [ ] #task Decide whether to publish a 60-second "what is this" GIF or screencast for the README.
+
+## Parking lot
+
 - [ ] #task Decide whether the long-term CLI should be called `vibe`, `agentops`, or another command.
-- [ ] #task Decide whether future CLI work should live in a separate repo or a monorepo after this template reaches a release-worthy state.
-- [ ] #task Decide which future-product details belong in public docs versus local planning notes.
-
-## Next
-
-- [ ] #task #next Stabilize this repo as the public reference template before splitting out a CLI.
-- [x] #task #next Verify all README quickstart instructions are accurate.
-- [x] #task #next Run `./scripts/check-agent-docs.sh` and fix any cross-platform drift issues.
-- [x] #task #next Verify `scripts/init.ps1` from a fresh test directory.
-- [x] #task #next Verify `scripts/init.sh` from a fresh test directory.
-- [x] #task #next Verify strict mode behavior after placeholders are replaced in the PowerShell init smoke test.
-- [ ] #task #next Harden `scripts/check-agent-docs.ps1` so failures are clear and actionable.
-- [ ] #task #next Harden `scripts/check-agent-docs.sh` so it matches the PowerShell behavior.
-- [ ] #task #next Confirm minimal / standard / full persona tier behavior works as documented.
-- [x] #task #next Add template version metadata for the first public release.
-- [x] #task #next Add or update release notes for a credible `v0.1.0` template release.
-- [x] #task #next Add a fresh-clone acceptance checklist for release readiness.
-
-## Backlog
-
-- [ ] #task Build the CLI MVP after the template is release-worthy.
-- [ ] #task Implement future CLI command: `vibe init`.
-- [ ] #task Implement future CLI command: `vibe check`.
-- [ ] #task Implement future CLI command: `vibe sync`.
-- [ ] #task Implement future CLI command: `vibe doctor`.
-- [ ] #task Define a future config schema such as `vibe.config.yml` or `agentops.config.yml`.
+- [ ] #task Decide whether future CLI work lives in a separate repo or a monorepo.
+- [ ] #task Decide what future-product details belong in public docs versus local planning notes.
+- [ ] #task Implement future CLI commands: `vibe init`, `vibe check`, `vibe sync`, `vibe doctor`, `vibe upgrade`.
+- [ ] #task Define the future config schema (`vibe.config.yml` / `agentops.config.yml`).
 - [ ] #task Define generated vs user-owned file ownership rules for safe upgrades.
-- [ ] #task Design a dry-run upgrade workflow for existing projects.
-- [ ] #task Design persona pack metadata for minimal, standard, and full tiers.
+- [ ] #task Design persona pack metadata for installable specialist tiers.
 - [ ] #task Design workflow pack metadata for spec, review, handoff, retro, TODO triage, and session logging.
-- [ ] #task Explore a future local web UI command such as `vibe studio`.
+- [ ] #task Explore a future local web UI (`vibe studio`) only after the CLI is proven.
 - [ ] #task Explore multi-repo support only after CLI demand is proven.
-- [ ] #task Keep experimental workflows out of the public template until they are proven.
 
-## Done
+## Done (v0.1.0)
+
+- [x] Stabilize the public template before splitting out a CLI.
+- [x] Verify README quickstart accuracy.
+- [x] Verify `scripts/init.ps1` and `scripts/init.sh` from a fresh test directory.
+- [x] Verify strict-mode behavior after placeholders are replaced (PowerShell init smoke test).
+- [x] Cross-check that PowerShell and bash drift checks behave identically.
+- [x] Confirm minimal / standard / full persona tier behavior works as documented; smoke tests cover both `full` and `standard` flows.
+- [x] Add `docs/WHY.md` explaining the philosophy and the problem it solves.
+- [x] Add `docs/FAQ.md` consolidating common questions.
+- [x] Add a worked example brief at `docs/examples/PROJECT_BRIEF.example.md`.
+- [x] Add template version metadata for the first public release; init now stamps `.vibe-template-version` for upgrade detection.
+- [x] Add release notes for `v0.1.0` in `CHANGELOG.md`.
+- [x] Add a fresh-clone acceptance checklist (`docs/RELEASE_CHECKLIST.md`).
+- [x] Document strict mode in `docs/SETUP_CHECKLIST.md` and `docs/FAQ.md`.

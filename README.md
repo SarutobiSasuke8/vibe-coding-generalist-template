@@ -11,7 +11,7 @@ A forkable starter for AI-assisted software projects. Aligns Claude Code, Codex,
 ./scripts/init.ps1       # Windows PowerShell
 ```
 
-The init script prompts for project name, vibe, install/run/test/lint/build commands, primary agent, and personas tier -- then fills placeholders, demotes optional personas if you picked `minimal`, and runs the drift check. Re-run anytime with `--force` (or `-Force`).
+The init script prompts for project name, vibe, install/run/test/lint/build commands, primary agent, and personas tier (`minimal` / `standard` / `full`) -- then fills placeholders, demotes the personas the chosen tier doesn't keep, and runs the drift check. Re-run anytime with `--force` (or `-Force`).
 
 Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.md).
 
@@ -23,7 +23,7 @@ Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.
 - **Product philosophy** -- [`docs/WHY.md`](docs/WHY.md) explains why the template exists and what problem it solves.
 - **Release spine** -- `VERSION`, [`CHANGELOG.md`](CHANGELOG.md), and [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) define the path to a trustworthy public template release.
 - **Session memory** -- append-only `Session Logs/` with a template, index, and clear "when to log" rule.
-- **Drift check** -- `scripts/check-agent-docs.ps1` and `.sh` enforce that adapters stay slim, required headings exist, and (in strict mode) placeholders are replaced. CI runs both on every PR.
+- **Drift check** -- `scripts/check-agent-docs.ps1` and `.sh` enforce that adapters stay slim, required headings exist, and (in `--strict` / `-Strict` mode) placeholders are replaced. CI runs the standard check on every PR; run strict locally after init in your fork. See [`docs/FAQ.md`](docs/FAQ.md#drift-check-and-strict-mode) for the full rule list.
 - **Claude Code scaffolding** -- `.claude/settings.json` with read-only Bash defaults plus slash commands `/brief`, `/spec`, `/council`, `/review`, `/session-log`, `/drift-check`, `/handoff`, `/todo-triage`, `/retro`.
 - **PR template** -- matches the AGENTS.md handoff format (Change / Files / Verification / Risks / Session log).
 
@@ -61,9 +61,11 @@ Add new commands by dropping a `.md` file in `.claude/commands/`. Keep commands 
 
 ## FAQ
 
+For the full FAQ see [`docs/FAQ.md`](docs/FAQ.md). The short version:
+
 **Do I need all four agent adapters?** Keep them. They're thin (~30-40 lines each) and forks of this template are friendlier to other contributors when the tools they prefer are pre-configured.
 
-**Do I need all 11 personas?** No. Run init with `--personas-tier minimal` (or pick it interactively) -- that keeps Product, CTO, and QA in `personas/`, moves the rest to `personas/optional/`. Promote any optional persona back when its concerns become recurring.
+**Do I need all 11 personas?** No. The init prompt offers three tiers: `minimal` (Product, CTO, QA -- 3), `standard` (adds Code Reviewer, Design, Delivery -- 6), and `full` (all 11). Personas not kept move to `personas/optional/`. Promote any optional persona back when its concerns become recurring.
 
 **What if I only use Claude Code?** Same answer as the agents question: leave the others. They cost ~150 lines total and your collaborators may use them.
 

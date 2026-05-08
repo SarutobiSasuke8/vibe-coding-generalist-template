@@ -237,7 +237,7 @@ fi
 [[ -z "$build_cmd"     ]] && build_cmd=$(read_with_default "Build command")
 [[ -z "$primary_agent" ]] && primary_agent=$(confirm_choice "Primary agent" "claude" claude codex cursor gemini copilot)
 [[ -z "$current_stage" ]] && current_stage=$(confirm_choice "Current stage" "prototype" prototype "active build" maintenance archived)
-[[ -z "$personas_tier" ]] && personas_tier=$(confirm_choice "Personas tier (minimal=Product+CTO+QA, full=all 11)" "minimal" minimal full)
+[[ -z "$personas_tier" ]] && personas_tier=$(confirm_choice "Personas tier (minimal=3 Product/CTO/QA, standard=6 +Code Reviewer/Design/Delivery, full=all 11)" "standard" minimal standard full)
 
 echo
 echo "Applying changes..."
@@ -276,19 +276,36 @@ replace_in_file "AGENTS.md" 'Package manager: `TODO`' "Package manager: \`Not sp
 replace_in_file "AGENTS.md" 'Formatting: `TODO`' "Formatting: \`Follow surrounding code\`" literal || true
 replace_in_file "AGENTS.md" 'Test framework: `TODO`' "Test framework: \`Not specified\`" literal || true
 
-if [[ "$personas_tier" == "minimal" ]]; then
+case "$personas_tier" in
+    minimal)
+        demote=(
+            "aegis-defensive-security.md"
+            "code-reviewer-maintainability.md"
+            "data-analytics-lead.md"
+            "delivery-lead.md"
+            "design-director-vibe-coding.md"
+            "growth-launch-strategist.md"
+            "ops-deployment-engineer.md"
+            "research-scout.md"
+        )
+        ;;
+    standard)
+        demote=(
+            "aegis-defensive-security.md"
+            "data-analytics-lead.md"
+            "growth-launch-strategist.md"
+            "ops-deployment-engineer.md"
+            "research-scout.md"
+        )
+        ;;
+    *)
+        demote=()
+        ;;
+esac
+
+if [[ ${#demote[@]} -gt 0 ]]; then
     mkdir -p "$root/personas/optional"
-    optional=(
-        "aegis-defensive-security.md"
-        "code-reviewer-maintainability.md"
-        "data-analytics-lead.md"
-        "delivery-lead.md"
-        "design-director-vibe-coding.md"
-        "growth-launch-strategist.md"
-        "ops-deployment-engineer.md"
-        "research-scout.md"
-    )
-    for p in "${optional[@]}"; do
+    for p in "${demote[@]}"; do
         src="$root/personas/$p"
         dst="$root/personas/optional/$p"
         if [[ -f "$src" ]]; then
@@ -299,6 +316,14 @@ if [[ "$personas_tier" == "minimal" ]]; then
 fi
 
 [[ -n "$primary_agent" ]] && echo "  primary agent recorded as '$primary_agent'"
+
+# Stamp the template version this fork was initialized from. Future CLI tooling
+# uses this marker to detect upgradable forks.
+if [[ -f "$root/VERSION" ]]; then
+    stamp_version="$(tr -d '\r\n[:space:]' < "$root/VERSION")"
+    printf '%s' "$stamp_version" > "$root/.vibe-template-version"
+    echo "  recorded template version $stamp_version in .vibe-template-version"
+fi
 
 echo
 echo "Running drift check..."

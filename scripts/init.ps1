@@ -25,7 +25,7 @@ param(
     [string]$BuildCmd,
     [ValidateSet("claude","codex","cursor","gemini","copilot","")][string]$PrimaryAgent = "",
     [ValidateSet("prototype","active build","maintenance","archived","")][string]$CurrentStage = "",
-    [ValidateSet("minimal","full","")][string]$PersonasTier = ""
+    [ValidateSet("minimal","standard","full","")][string]$PersonasTier = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -208,8 +208,8 @@ if (-not $CurrentStage) {
     $CurrentStage = Confirm-Choice "Current stage" @("prototype","active build","maintenance","archived") "prototype"
 }
 if (-not $PersonasTier) {
-    $tierPrompt = "Personas tier - minimal keeps Product/CTO/QA, full keeps all 11"
-    $PersonasTier = Confirm-Choice $tierPrompt @("minimal","full") "minimal"
+    $tierPrompt = "Personas tier - minimal=3 (Product/CTO/QA), standard=6 (+Code Reviewer/Design/Delivery), full=all 11"
+    $PersonasTier = Confirm-Choice $tierPrompt @("minimal","standard","full") "standard"
 }
 
 Write-Host ""
@@ -264,12 +264,8 @@ Replace-InFile "AGENTS.md" 'Formatting: `TODO`' "Formatting: ``Follow surroundin
 Replace-InFile "AGENTS.md" 'Test framework: `TODO`' "Test framework: ``Not specified``" -Literal | Out-Null
 
 # Persona tiering
-if ($PersonasTier -eq "minimal") {
-    $optionalDir = Join-Path $root "personas/optional"
-    if (-not (Test-Path -LiteralPath $optionalDir)) {
-        New-Item -ItemType Directory -Path $optionalDir | Out-Null
-    }
-    $optional = @(
+$tierDemotions = @{
+    "minimal"  = @(
         "aegis-defensive-security.md",
         "code-reviewer-maintainability.md",
         "data-analytics-lead.md",
@@ -279,7 +275,22 @@ if ($PersonasTier -eq "minimal") {
         "ops-deployment-engineer.md",
         "research-scout.md"
     )
-    foreach ($p in $optional) {
+    "standard" = @(
+        "aegis-defensive-security.md",
+        "data-analytics-lead.md",
+        "growth-launch-strategist.md",
+        "ops-deployment-engineer.md",
+        "research-scout.md"
+    )
+    "full"     = @()
+}
+
+if ($tierDemotions.ContainsKey($PersonasTier) -and $tierDemotions[$PersonasTier].Count -gt 0) {
+    $optionalDir = Join-Path $root "personas/optional"
+    if (-not (Test-Path -LiteralPath $optionalDir)) {
+        New-Item -ItemType Directory -Path $optionalDir | Out-Null
+    }
+    foreach ($p in $tierDemotions[$PersonasTier]) {
         $src = Join-Path $root "personas/$p"
         $dst = Join-Path $optionalDir $p
         if (Test-Path -LiteralPath $src) {
@@ -291,6 +302,16 @@ if ($PersonasTier -eq "minimal") {
 
 if ($PrimaryAgent) {
     Write-Host "  primary agent recorded as '$PrimaryAgent'" -ForegroundColor DarkGray
+}
+
+# Stamp the template version this fork was initialized from. Future CLI tooling
+# uses this marker to detect upgradable forks.
+$versionPath = Join-Path $root "VERSION"
+$stampPath = Join-Path $root ".vibe-template-version"
+if (Test-Path -LiteralPath $versionPath) {
+    $stampVersion = (Get-Content -Raw -LiteralPath $versionPath).Trim()
+    Set-Content -LiteralPath $stampPath -Value $stampVersion -NoNewline
+    Write-Host "  recorded template version $stampVersion in .vibe-template-version" -ForegroundColor DarkGray
 }
 
 Write-Host ""

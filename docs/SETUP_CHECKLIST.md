@@ -2,7 +2,16 @@
 
 Use this after creating a new repository from this template.
 
-> **Tip:** `./scripts/init.sh` (or `init.ps1`) automates most of the **Required** items below. It prompts for project name, project type, vibe, primary user, commands, primary agent, stage, and personas tier, then runs the drift check. The list below is the manual fallback or post-init polish.
+> **Tip:** `./scripts/init.sh` (or `init.ps1`) automates most of the **Required** items below. It prompts for project name, project type, vibe, primary user, commands, primary agent, stage, and personas tier (`minimal` / `standard` / `full`), then runs the drift check. The list below is the manual fallback or post-init polish.
+
+## Strict mode
+
+The drift check has two modes:
+
+- **Standard** (`./scripts/check-agent-docs.sh` / `./scripts/check-agent-docs.ps1`) -- required files, headings, alignment markers, adapter line cap, persona placement, session log index. CI runs this on every PR.
+- **Strict** (`--strict` / `-Strict`) -- everything above, plus fails on unresolved `TODO` placeholders or Mustache-style template tokens (literal double-brace placeholders) in `AGENTS.md`, `docs/PROJECT_BRIEF.md`, the adapters, `README.md`, `ROADMAP.md`, `TODO.md`, and any file under `docs/` (excluding `docs/examples/`, `Templates/`, and `personas/optional/`).
+
+The public template repo is *expected* to fail strict mode -- it ships with `TODO` placeholders for forkers to fill in. Strict mode is the gate to run **after** init, in your fork, before the first real handoff or release.
 
 ## Required
 
