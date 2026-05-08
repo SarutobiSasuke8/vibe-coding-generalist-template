@@ -17,6 +17,7 @@ $requiredFiles = @(
     "docs/AGENT_ALIGNMENT.md",
     "docs/CLI_ROADMAP.md",
     "docs/AGENT_OPERATING_PRINCIPLES.md",
+    "docs/FAQ.md",
     "docs/PERSONA_COUNCIL.md",
     "docs/PROJECT_BRIEF.md",
     "docs/RELEASE_CHECKLIST.md",
