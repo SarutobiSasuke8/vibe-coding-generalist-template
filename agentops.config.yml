@@ -1,0 +1,35 @@
+schemaVersion: 1
+templateVersion: 0.1.0
+project:
+  name: TODO
+  type: TODO
+  stage: prototype
+  primaryUser: TODO
+agents:
+  primary: codex
+  enabled:
+    - claude
+    - codex
+    - cursor
+    - copilot
+    - gemini
+adapters:
+  canonical: AGENTS.md
+  files:
+    claude: CLAUDE.md
+    codex: CODEX.md
+    gemini: GEMINI.md
+    copilot: .github/copilot-instructions.md
+    cursor: .cursor/rules/vibe-coding-core.mdc
+personas:
+  tier: standard
+commands:
+  install: TODO
+  dev: TODO
+  test: TODO
+  lint: TODO
+  build: TODO
+checks:
+  strictPlaceholders: false
+  requireSessionLogIndex: true
+  requireAgentRuntime: true
