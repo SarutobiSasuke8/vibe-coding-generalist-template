@@ -45,4 +45,12 @@ Regenerate generated adapter sections from `AGENTS.md` while preserving custom s
 
 ### `agentops doctor`
 
-Report repo readiness: missing commands, unclear project brief, stale TODOs, missing verification policy, adapter drift, missing runtime files, and useful next actions.
+Report current agentic readiness and the next useful action from `Agent State/` and `Memory/`.
+
+```bash
+agentops doctor
+agentops doctor --json
+agentops doctor --root ./some-project
+```
+
+The doctor command checks runtime files, summarizes current goal, active task, next ready task, blockers, verification status, and suggests the next action for a single-orchestrator agent run.

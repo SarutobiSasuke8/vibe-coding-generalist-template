@@ -97,7 +97,13 @@ agentops sync
 agentops doctor
 ```
 
-The current source of truth remains the Markdown template plus PowerShell checks. A future CLI scaffold should call shared validation logic rather than replacing the file-based contract with hidden state.
+Current CLI status:
+
+- `agentops check` validates the repo agent operating layer.
+- `agentops doctor` reports current agentic readiness and next action from `Agent State/`.
+- `agentops init` and `agentops sync` are still scaffolded.
+
+The current source of truth remains the Markdown template plus PowerShell checks. CLI commands should call shared validation logic rather than replacing the file-based contract with hidden state.
 
 ## Suggested Repo Shape
 

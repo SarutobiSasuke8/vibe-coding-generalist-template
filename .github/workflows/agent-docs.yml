@@ -17,14 +17,22 @@ on:
       - ".github/copilot-instructions.md"
       - ".github/workflows/agent-docs.yml"
       - ".cursor/rules/**"
-      - "docs/**"
       - "Agent State/**"
       - "Memory/**"
-      - "personas/**"
-      - "Session Logs/**"
+      - "QA/**"
       - "Templates/**"
-      - "scripts/check-agent-docs.ps1"
-      - "scripts/check-agent-behavior.ps1"
+      - "docs/**"
+      - "examples/**"
+      - "personas/**"
+      - "scripts/**"
+      - "Session Logs/**"
+      - "workflows/**"
+      - "agentops.config.yml"
+      - "VERSION"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.base.json"
+      - "packages/**"
   push:
     branches:
       - main
@@ -43,22 +51,45 @@ on:
       - ".github/copilot-instructions.md"
       - ".github/workflows/agent-docs.yml"
       - ".cursor/rules/**"
-      - "docs/**"
       - "Agent State/**"
       - "Memory/**"
-      - "personas/**"
-      - "Session Logs/**"
+      - "QA/**"
       - "Templates/**"
-      - "scripts/check-agent-docs.ps1"
-      - "scripts/check-agent-behavior.ps1"
+      - "docs/**"
+      - "examples/**"
+      - "personas/**"
+      - "scripts/**"
+      - "Session Logs/**"
+      - "workflows/**"
+      - "agentops.config.yml"
+      - "VERSION"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.base.json"
+      - "packages/**"
 
 jobs:
   check-agent-docs:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Check agent doc alignment
         shell: pwsh
-        run: |
-          ./scripts/check-agent-docs.ps1
-          ./scripts/check-agent-behavior.ps1
+        run: ./scripts/check-agent-docs.ps1 -Json
+      - name: Check agent behavior scaffold
+        shell: pwsh
+        run: ./scripts/check-agent-behavior.ps1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build CLI
+        run: npm run build
+      - name: Test CLI
+        run: npm test

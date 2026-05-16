@@ -31,6 +31,7 @@ When resuming:
 
 - read `Agent State/agent-state.md` first
 - check `Agent State/task-queue.md` for the active or verify task
+- run `agentops doctor` when the CLI is available to summarize readiness and next action
 - inspect recent diffs before editing
 - trust durable memory only when it is still consistent with the codebase
 - update state before handing off

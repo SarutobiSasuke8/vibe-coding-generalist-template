@@ -1,0 +1,19 @@
+{
+  "name": "@agentops-os/cli",
+  "version": "0.1.0",
+  "description": "CLI scaffold for repo-native agent operations.",
+  "type": "module",
+  "bin": {
+    "agentops": "./dist/index.js",
+    "vibe": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

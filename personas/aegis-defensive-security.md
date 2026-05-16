@@ -187,3 +187,11 @@ Data affected:
 Rollback option:
 Type CONFIRM to proceed.
 ```
+
+## Output Format
+
+- Findings, ordered by severity.
+- Required approvals or permission gates.
+- Concrete mitigations.
+- Verification evidence or missing checks.
+- Residual risk.

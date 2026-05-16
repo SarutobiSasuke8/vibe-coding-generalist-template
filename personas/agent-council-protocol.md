@@ -147,3 +147,12 @@ For code-review-style work, findings should still lead when the user asks for a 
 - Do not let Growth override Product truth or security constraints.
 - Do not let CTO speed override QA, AEGIS, or `AGENTS.md`.
 - Do not create tasks, docs, or automation changes without checking the repo's current conventions.
+
+## Output Format
+
+- Decision or recommendation.
+- Persona inputs that materially changed the decision.
+- Conflicts resolved.
+- Action plan.
+- Verification or approval requirements.
+- Open questions.
