@@ -34,6 +34,7 @@ When resuming:
 - run `agentops doctor` when the CLI is available to summarize readiness and next action
 - use `agentops next`, `agentops start <task-id>`, `agentops complete --verification <note>`, and `agentops block --reason <note>` when the CLI is available
 - use `agentops maintenance` for a read-only wake-up check before scheduled or unattended work
+- the default scheduled workflow is `.github/workflows/agent-maintenance.yml`, which runs read-only maintenance weekly and on manual dispatch
 - inspect recent diffs before editing
 - trust durable memory only when it is still consistent with the codebase
 - update state before handing off

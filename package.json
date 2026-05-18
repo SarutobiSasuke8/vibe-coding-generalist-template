@@ -12,6 +12,8 @@
     "check:agent-docs": "pwsh ./scripts/check-agent-docs.ps1",
     "check:agent-docs:json": "pwsh ./scripts/check-agent-docs.ps1 -Json",
     "check:agent-behavior": "pwsh ./scripts/check-agent-behavior.ps1",
+    "maintenance": "npm run build --workspace @agentops-os/cli && node packages/cli/dist/index.js maintenance",
+    "maintenance:quick": "npm run build --workspace @agentops-os/cli && node packages/cli/dist/index.js maintenance --no-tests",
     "test": "npm run test --workspaces"
   },
   "devDependencies": {

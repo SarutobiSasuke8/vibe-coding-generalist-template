@@ -1,0 +1,27 @@
+name: Agent Maintenance
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  maintenance:
+    name: Read-only agent maintenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build CLI
+        run: npm run build --workspace @agentops-os/cli
+      - name: Run read-only maintenance check
+        run: node packages/cli/dist/index.js maintenance --json --no-tests

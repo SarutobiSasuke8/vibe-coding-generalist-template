@@ -23,6 +23,7 @@ Small one-line fixes do not need a session log unless the user asks.
 
 ## Logs
 
+- [Agent Maintenance Scheduler](2026-05-18-session-log-agent-maintenance-scheduler.md)
 - [Agentops Maintenance](2026-05-18-session-log-agentops-maintenance.md)
 - [Agent Task CLI](2026-05-18-session-log-agent-task-cli.md)
 - [Agentops Doctor CLI](2026-05-16-session-log-agentops-doctor-cli.md)
@@ -36,5 +37,6 @@ Small one-line fixes do not need a session log unless the user asks.
 - A read-only doctor command is a useful first bridge from scaffold to single-orchestrator operation.
 - Stable task IDs plus queue movement commands make the single-orchestrator loop operable before scheduling.
 - Read-only maintenance is the first routine that can safely be scheduled or run unattended.
+- GitHub Actions provides the first safe scheduler for read-only maintenance.
 - Session logs preserve decisions, rationale, verification, and handoff context.
 - Strict validation should fail until a newly generated project replaces setup placeholders.

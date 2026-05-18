@@ -15,29 +15,29 @@ TODO: Define the concrete outcome the orchestrator is trying to achieve.
 
 ## Active Task
 
-- Status: inbox | ready | active | blocked | verify | done
-- Task:
+- Status: done
+- Task: A-003 #task Add a scheduler for the read-only maintenance check. (verification: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:quick passed)
 - Owner: orchestrator
-- Started:
-- Last updated:
+- Started: 2026-05-18T12:25:55.901Z
+- Last updated: 2026-05-18T12:25:55.901Z
 
 ## Last Action
 
-TODO: Record the last meaningful action, command, edit, or decision.
+Completed A-003.
 
 ## Next Action
 
-TODO: Record the next safe action that should happen when work resumes.
+Pick the next ready task or run agentops doctor.
 
 ## Blockers
 
-- TODO: Note any missing input, failed command, permission gate, or external dependency.
+No current blockers.
 
 ## Verification Status
 
-- Current check:
-- Result:
-- Residual risk:
+- Current check: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:quick passed
+- Result: passed
+- Residual risk: not yet reviewed
 
 ## Run Notes
 

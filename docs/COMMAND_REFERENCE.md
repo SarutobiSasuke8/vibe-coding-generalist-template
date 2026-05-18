@@ -106,6 +106,8 @@ Run the first safe autonomous maintenance check. This command is read-only: it r
 agentops maintenance
 agentops maintenance --json
 agentops maintenance --no-tests
+npm run maintenance
+npm run maintenance:quick
 ```
 
 The maintenance check runs:
