@@ -20,11 +20,11 @@ Use this queue for agent-executable work. Keep tasks concrete enough that an orc
 
 ## Inbox
 
-- [ ] #task Capture the first project-specific agent task.
+- [ ] [A-001] #task Capture the first project-specific agent task.
 
 ## Ready
 
-- [ ] #task Define the first safe autonomous maintenance check.
+- [ ] [A-002] #task Define the first safe autonomous maintenance check.
 
 ## Active
 

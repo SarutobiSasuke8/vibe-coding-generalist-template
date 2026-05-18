@@ -3,20 +3,25 @@
 import { cwd, exit } from "node:process";
 import { runChecks } from "./checks.js";
 import { runDoctor } from "./doctor.js";
+import { blockTask, completeTask, getNextTask, listTasks, loadQueue, startTask } from "./tasks.js";
 
 type ParsedArgs = {
   command: string;
+  rest: string[];
   json: boolean;
   strict: boolean;
   rootDir: string;
+  note?: string;
 };
 
 function parseArgs(argv: string[]): ParsedArgs {
   const args = [...argv];
   const command = args.shift() ?? "help";
+  const rest: string[] = [];
   let json = false;
   let strict = false;
   let rootDir = cwd();
+  let note: string | undefined;
 
   while (args.length > 0) {
     const arg = args.shift();
@@ -26,10 +31,14 @@ function parseArgs(argv: string[]): ParsedArgs {
       strict = true;
     } else if (arg === "--root") {
       rootDir = args.shift() ?? rootDir;
+    } else if (arg === "--note" || arg === "--verification" || arg === "--reason") {
+      note = args.shift() ?? "";
+    } else if (arg) {
+      rest.push(arg);
     }
   }
 
-  return { command, json, strict, rootDir };
+  return { command, rest, json, strict, rootDir, note };
 }
 
 function printHelp() {
@@ -37,6 +46,11 @@ function printHelp() {
 
 Usage:
   agentops check [--strict] [--json] [--root <path>]
+  agentops status [--json] [--root <path>]
+  agentops next [--json] [--root <path>]
+  agentops start [task-id] [--root <path>]
+  agentops complete --verification <note> [--root <path>]
+  agentops block --reason <note> [--root <path>]
   agentops init
   agentops sync
   agentops doctor [--json] [--root <path>]
@@ -44,6 +58,11 @@ Usage:
 Implemented:
   check   Validate the repo agent operating layer.
   doctor  Report current agentic readiness and next action.
+  status  Show current agent task status.
+  next    Show the current active, verify, or ready task.
+  start   Move a ready task to active and update agent state.
+  complete Move the active task to done with a verification note.
+  block   Move the active task to blocked with a reason.
 
 Scaffolded:
   init    Planned initializer for template files.
@@ -103,6 +122,58 @@ if (parsed.command === "doctor") {
       console.log(`- ${action}`);
     }
   }
+  exit(result.ok ? 0 : 1);
+}
+
+if (parsed.command === "status") {
+  const queue = loadQueue(parsed.rootDir);
+  const tasks = listTasks(queue);
+  const result = {
+    tasks,
+    counts: tasks.reduce<Record<string, number>>((counts, task) => {
+      counts[task.section] = (counts[task.section] ?? 0) + 1;
+      return counts;
+    }, {})
+  };
+  if (parsed.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log("Agent task status:");
+    for (const task of tasks) {
+      console.log(`- ${task.section}: ${task.id} ${task.text}`);
+    }
+    if (tasks.length === 0) {
+      console.log("- No task IDs found.");
+    }
+  }
+  exit(0);
+}
+
+if (parsed.command === "next") {
+  const result = getNextTask(parsed.rootDir);
+  if (parsed.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(result.message);
+  }
+  exit(result.ok ? 0 : 1);
+}
+
+if (parsed.command === "start") {
+  const result = startTask(parsed.rootDir, parsed.rest[0]);
+  console.log(result.message);
+  exit(result.ok ? 0 : 1);
+}
+
+if (parsed.command === "complete") {
+  const result = completeTask(parsed.rootDir, parsed.note ?? "");
+  console.log(result.message);
+  exit(result.ok ? 0 : 1);
+}
+
+if (parsed.command === "block") {
+  const result = blockTask(parsed.rootDir, parsed.note ?? "");
+  console.log(result.message);
   exit(result.ok ? 0 : 1);
 }
 

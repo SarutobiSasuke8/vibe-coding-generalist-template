@@ -92,6 +92,11 @@ The template is designed to become a CLI-backed product. The first commands are 
 
 ```bash
 agentops check
+agentops status
+agentops next
+agentops start
+agentops complete
+agentops block
 agentops init
 agentops sync
 agentops doctor
@@ -101,6 +106,7 @@ Current CLI status:
 
 - `agentops check` validates the repo agent operating layer.
 - `agentops doctor` reports current agentic readiness and next action from `Agent State/`.
+- `agentops status`, `next`, `start`, `complete`, and `block` operate the markdown task queue.
 - `agentops init` and `agentops sync` are still scaffolded.
 
 The current source of truth remains the Markdown template plus PowerShell checks. CLI commands should call shared validation logic rather than replacing the file-based contract with hidden state.

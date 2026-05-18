@@ -1,10 +1,11 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { runChecks } from "./checks.js";
 import { runDoctor } from "./doctor.js";
+import { blockTask, completeTask, getNextTask, startTask } from "./tasks.js";
 
 test("reports missing required files", () => {
   const root = makeTempRepo();
@@ -32,8 +33,40 @@ test("doctor reports next ready agent task", () => {
   const result = runDoctor({ rootDir: root });
 
   assert.equal(result.ok, true);
-  assert.equal(result.summary.nextReadyTask, "#task Write a focused test.");
+  assert.equal(result.summary.nextReadyTask, "[A-001] #task Write a focused test.");
   assert.ok(result.nextActions.some((action) => action.includes("Promote the ready task")));
+});
+
+test("task commands start, complete, and update state", () => {
+  const root = makeTempRepo();
+  writeMinimalValidRepo(root);
+  writeMinimalAgentRuntime(root);
+
+  const next = getNextTask(root);
+  assert.equal(next.ok, true);
+  assert.equal(next.task?.id, "A-001");
+
+  const started = startTask(root, "A-001");
+  assert.equal(started.ok, true);
+  assert.match(readFileSync(join(root, "Agent State", "task-queue.md"), "utf8"), /## Active\s+- \[ \] \[A-001\]/);
+
+  const completed = completeTask(root, "npm test passed");
+  assert.equal(completed.ok, true);
+  const queue = readFileSync(join(root, "Agent State", "task-queue.md"), "utf8");
+  assert.match(queue, /## Done\s+- \[x\] \[A-001\].*verification: npm test passed/s);
+  assert.match(readFileSync(join(root, "Agent State", "agent-state.md"), "utf8"), /Status: done/);
+});
+
+test("task commands block the active task with a reason", () => {
+  const root = makeTempRepo();
+  writeMinimalValidRepo(root);
+  writeMinimalAgentRuntime(root);
+
+  assert.equal(startTask(root).ok, true);
+  const blocked = blockTask(root, "needs API key");
+
+  assert.equal(blocked.ok, true);
+  assert.match(readFileSync(join(root, "Agent State", "task-queue.md"), "utf8"), /## Blocked\s+- \[ \] \[A-001\].*blocked: needs API key/s);
 });
 
 function makeTempRepo() {
@@ -130,7 +163,11 @@ function writeMinimalAgentRuntime(root: string) {
       "## Verify",
       "No task waiting for verification.",
       "## Ready",
-      "- [ ] #task Write a focused test."
+      "- [ ] [A-001] #task Write a focused test.",
+      "## Blocked",
+      "No blocked agent task.",
+      "## Done",
+      "No completed agent tasks yet."
     ].join("\n")
   );
   writeFileSync(join(root, "Memory", "decisions.md"), "# Decisions\n");

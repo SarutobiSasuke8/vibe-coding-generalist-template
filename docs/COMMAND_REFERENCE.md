@@ -54,3 +54,46 @@ agentops doctor --root ./some-project
 ```
 
 The doctor command checks runtime files, summarizes current goal, active task, next ready task, blockers, verification status, and suggests the next action for a single-orchestrator agent run.
+
+### `agentops status`
+
+Show all task IDs currently found in `Agent State/task-queue.md`.
+
+```bash
+agentops status
+agentops status --json
+```
+
+### `agentops next`
+
+Show the current active task, task waiting for verification, or next ready task.
+
+```bash
+agentops next
+agentops next --json
+```
+
+### `agentops start`
+
+Move a ready task to active and update `Agent State/agent-state.md`.
+
+```bash
+agentops start
+agentops start A-002
+```
+
+### `agentops complete`
+
+Move the active task to done. A verification note is required.
+
+```bash
+agentops complete --verification "npm test passed"
+```
+
+### `agentops block`
+
+Move the active task to blocked. A reason is required.
+
+```bash
+agentops block --reason "Needs API key"
+```

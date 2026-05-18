@@ -32,6 +32,17 @@ When resuming:
 - read `Agent State/agent-state.md` first
 - check `Agent State/task-queue.md` for the active or verify task
 - run `agentops doctor` when the CLI is available to summarize readiness and next action
+- use `agentops next`, `agentops start <task-id>`, `agentops complete --verification <note>`, and `agentops block --reason <note>` when the CLI is available
 - inspect recent diffs before editing
 - trust durable memory only when it is still consistent with the codebase
 - update state before handing off
+
+## Task IDs
+
+Agent queue tasks should use stable IDs:
+
+```markdown
+- [ ] [A-001] #task Define the next safe action.
+```
+
+Use the same ID when starting, completing, blocking, or discussing the task.
