@@ -16,6 +16,7 @@ type ParsedArgs = {
   note?: string;
   includeTests: boolean;
   values: Record<string, string>;
+  outFile?: string;
 };
 
 function parseArgs(argv: string[]): ParsedArgs {
@@ -28,6 +29,7 @@ function parseArgs(argv: string[]): ParsedArgs {
   let note: string | undefined;
   let includeTests = true;
   const values: Record<string, string> = {};
+  let outFile: string | undefined;
 
   while (args.length > 0) {
     const arg = args.shift();
@@ -41,6 +43,8 @@ function parseArgs(argv: string[]): ParsedArgs {
       note = args.shift() ?? "";
     } else if (arg === "--no-tests") {
       includeTests = false;
+    } else if (arg === "--out") {
+      outFile = args.shift() ?? "";
     } else if (arg?.startsWith("--")) {
       const key = arg.slice(2);
       values[key] = args.shift() ?? "";
@@ -49,7 +53,7 @@ function parseArgs(argv: string[]): ParsedArgs {
     }
   }
 
-  return { command, rest, json, strict, rootDir, note, includeTests, values };
+  return { command, rest, json, strict, rootDir, note, includeTests, values, outFile };
 }
 
 function printHelp() {
@@ -65,7 +69,7 @@ Usage:
   agentops init --name <name> --type <type> --primary-user <user> --stage <stage> --goal <goal> --package-manager <pm> --install <cmd> --dev <cmd> --test <cmd> --lint <cmd> --build <cmd>
   agentops sync
   agentops doctor [--json] [--root <path>]
-  agentops maintenance [--json] [--no-tests] [--root <path>]
+  agentops maintenance [--json] [--no-tests] [--out <path>] [--root <path>]
 
 Implemented:
   check   Validate the repo agent operating layer.
@@ -191,7 +195,7 @@ if (parsed.command === "block") {
 }
 
 if (parsed.command === "maintenance") {
-  const result = runMaintenance({ rootDir: parsed.rootDir, includeTests: parsed.includeTests });
+  const result = runMaintenance({ rootDir: parsed.rootDir, includeTests: parsed.includeTests, outFile: parsed.outFile });
   if (parsed.json) {
     console.log(JSON.stringify(result, null, 2));
   } else {
@@ -211,6 +215,10 @@ if (parsed.command === "maintenance") {
     console.log("Next actions:");
     for (const action of result.nextActions) {
       console.log(`- ${action}`);
+    }
+    if (result.artifactPath) {
+      console.log("");
+      console.log(`Report written: ${result.artifactPath}`);
     }
   }
   exit(result.ok ? 0 : 1);

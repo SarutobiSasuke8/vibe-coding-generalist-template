@@ -24,4 +24,10 @@ jobs:
       - name: Build CLI
         run: npm run build --workspace @agentops-os/cli
       - name: Run read-only maintenance check
-        run: node packages/cli/dist/index.js maintenance --json --no-tests
+        run: node packages/cli/dist/index.js maintenance --json --no-tests --out reports/agent-maintenance.json
+      - name: Upload maintenance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-maintenance-report
+          path: reports/agent-maintenance.json
+          if-no-files-found: error

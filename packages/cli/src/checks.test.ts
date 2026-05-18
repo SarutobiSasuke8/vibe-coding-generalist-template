@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
@@ -82,6 +82,22 @@ test("maintenance reports read-only readiness without npm tests", () => {
   assert.equal(result.summary.taskCount, 2);
   assert.ok(result.steps.some((step) => step.name === "doctor"));
   assert.ok(result.steps.some((step) => step.name === "npm-test" && step.status === "skip"));
+});
+
+test("maintenance writes JSON report artifact", () => {
+  const root = makeTempRepo();
+  writeMinimalValidRepo(root);
+  writeMinimalAgentRuntime(root);
+
+  const result = runMaintenance({ rootDir: root, includeTests: false, outFile: "reports/maintenance.json" });
+
+  const reportPath = join(root, "reports", "maintenance.json");
+  assert.equal(result.readOnly, true);
+  assert.equal(result.artifactPath, reportPath);
+  assert.equal(existsSync(reportPath), true);
+  const report = JSON.parse(readFileSync(reportPath, "utf8"));
+  assert.equal(report.readOnly, true);
+  assert.equal(report.summary.taskCount, 2);
 });
 
 test("init fills core project placeholders", () => {

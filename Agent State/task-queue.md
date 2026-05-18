@@ -24,7 +24,6 @@ Use this queue for agent-executable work. Keep tasks concrete enough that an orc
 
 ## Ready
 
-- [ ] [A-004] #task Add maintenance report artifact support.
 - [ ] [A-005] #task Add interactive prompts or config-file input for `agentops init`.
 
 ## Active
@@ -43,3 +42,4 @@ No task waiting for verification.
 
 - [x] [A-002] #task Define the first safe autonomous maintenance check. (verification: agentops maintenance exists and passed locally)
 - [x] [A-003] #task Add a scheduler for the read-only maintenance check. (verification: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:quick passed)
+- [x] [A-004] #task Add maintenance report artifact support. (verification: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:report passed)

@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { runChecks } from "./checks.js";
 import { runDoctor } from "./doctor.js";
 import { getNextTask, listTasks, loadQueue } from "./tasks.js";
@@ -8,6 +8,7 @@ import { getNextTask, listTasks, loadQueue } from "./tasks.js";
 export type MaintenanceOptions = {
   rootDir: string;
   includeTests?: boolean;
+  outFile?: string;
 };
 
 export type MaintenanceStep = {
@@ -27,6 +28,7 @@ export type MaintenanceReport = {
   };
   steps: MaintenanceStep[];
   nextActions: string[];
+  artifactPath?: string;
 };
 
 export function runMaintenance(options: MaintenanceOptions): MaintenanceReport {
@@ -85,7 +87,7 @@ export function runMaintenance(options: MaintenanceOptions): MaintenanceReport {
 
   const ok = steps.every((step) => step.status === "pass" || step.status === "skip" || step.status === "warn");
 
-  return {
+  const report: MaintenanceReport = {
     ok,
     readOnly: true,
     readiness: doctor.readiness,
@@ -97,6 +99,15 @@ export function runMaintenance(options: MaintenanceOptions): MaintenanceReport {
     steps,
     nextActions: doctor.nextActions
   };
+
+  if (options.outFile) {
+    const outPath = resolveOutputPath(rootDir, options.outFile);
+    mkdirSync(dirname(outPath), { recursive: true });
+    report.artifactPath = outPath;
+    writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`);
+  }
+
+  return report;
 }
 
 function runPowerShellCheck(rootDir: string, name: string, scriptPath: string): MaintenanceStep {
@@ -142,4 +153,8 @@ function summarizeOutput(stdout: string | null, stderr: string | null): string {
     return "No output.";
   }
   return output.slice(-4).join(" | ");
+}
+
+function resolveOutputPath(rootDir: string, outFile: string): string {
+  return isAbsolute(outFile) ? outFile : join(rootDir, outFile);
 }

@@ -109,7 +109,7 @@ Current CLI status:
 - `agentops doctor` reports current agentic readiness and next action from `Agent State/`.
 - `agentops status`, `next`, `start`, `complete`, and `block` operate the markdown task queue.
 - `agentops maintenance` runs the first read-only autonomous maintenance check.
-- `.github/workflows/agent-maintenance.yml` schedules the read-only maintenance check weekly and supports manual runs.
+- `.github/workflows/agent-maintenance.yml` schedules the read-only maintenance check weekly, supports manual runs, and uploads a JSON report artifact.
 - `agentops init` fills the main template placeholders for a real project.
 - `agentops sync` is still scaffolded.
 

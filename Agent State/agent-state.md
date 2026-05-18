@@ -16,14 +16,14 @@ TODO: Define the concrete outcome the orchestrator is trying to achieve.
 ## Active Task
 
 - Status: done
-- Task: A-003 #task Add a scheduler for the read-only maintenance check. (verification: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:quick passed)
+- Task: A-004 #task Add maintenance report artifact support. (verification: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:report passed)
 - Owner: orchestrator
-- Started: 2026-05-18T12:25:55.901Z
-- Last updated: 2026-05-18T12:25:55.901Z
+- Started: 2026-05-18T14:08:06.551Z
+- Last updated: 2026-05-18T14:08:06.552Z
 
 ## Last Action
 
-Completed A-003.
+Completed A-004.
 
 ## Next Action
 
@@ -35,7 +35,7 @@ No current blockers.
 
 ## Verification Status
 
-- Current check: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:quick passed
+- Current check: npm run build, npm test, agent docs checks, behavior checks, and npm run maintenance:report passed
 - Result: passed
 - Residual risk: not yet reviewed
 

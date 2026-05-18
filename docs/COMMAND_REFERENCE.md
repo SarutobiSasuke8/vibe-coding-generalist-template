@@ -133,8 +133,10 @@ Run the first safe autonomous maintenance check. This command is read-only: it r
 agentops maintenance
 agentops maintenance --json
 agentops maintenance --no-tests
+agentops maintenance --out reports/agent-maintenance.json
 npm run maintenance
 npm run maintenance:quick
+npm run maintenance:report
 ```
 
 The maintenance check runs:
@@ -145,3 +147,5 @@ The maintenance check runs:
 - agent docs validation
 - agent behavior scaffold validation
 - `npm test` when `package.json` exists, unless `--no-tests` is used
+
+Use `--out <path>` to write the full JSON report as an artifact. The scheduled GitHub workflow writes `reports/agent-maintenance.json` and uploads it as `agent-maintenance-report`.
