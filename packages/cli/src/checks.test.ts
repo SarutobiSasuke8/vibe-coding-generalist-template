@@ -5,6 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { runChecks } from "./checks.js";
 import { runDoctor } from "./doctor.js";
+import { runMaintenance } from "./maintenance.js";
 import { blockTask, completeTask, getNextTask, startTask } from "./tasks.js";
 
 test("reports missing required files", () => {
@@ -67,6 +68,19 @@ test("task commands block the active task with a reason", () => {
 
   assert.equal(blocked.ok, true);
   assert.match(readFileSync(join(root, "Agent State", "task-queue.md"), "utf8"), /## Blocked\s+- \[ \] \[A-001\].*blocked: needs API key/s);
+});
+
+test("maintenance reports read-only readiness without npm tests", () => {
+  const root = makeTempRepo();
+  writeMinimalValidRepo(root);
+  writeMinimalAgentRuntime(root);
+
+  const result = runMaintenance({ rootDir: root, includeTests: false });
+
+  assert.equal(result.readOnly, true);
+  assert.equal(result.summary.taskCount, 1);
+  assert.ok(result.steps.some((step) => step.name === "doctor"));
+  assert.ok(result.steps.some((step) => step.name === "npm-test" && step.status === "skip"));
 });
 
 function makeTempRepo() {

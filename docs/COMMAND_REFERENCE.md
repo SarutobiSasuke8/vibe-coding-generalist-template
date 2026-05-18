@@ -97,3 +97,22 @@ Move the active task to blocked. A reason is required.
 ```bash
 agentops block --reason "Needs API key"
 ```
+
+### `agentops maintenance`
+
+Run the first safe autonomous maintenance check. This command is read-only: it reports readiness and next actions without moving tasks or editing files.
+
+```bash
+agentops maintenance
+agentops maintenance --json
+agentops maintenance --no-tests
+```
+
+The maintenance check runs:
+
+- `agentops doctor`
+- task status inspection
+- next-task lookup
+- agent docs validation
+- agent behavior scaffold validation
+- `npm test` when `package.json` exists, unless `--no-tests` is used

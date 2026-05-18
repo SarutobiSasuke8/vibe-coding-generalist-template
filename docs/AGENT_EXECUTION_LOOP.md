@@ -33,6 +33,7 @@ When resuming:
 - check `Agent State/task-queue.md` for the active or verify task
 - run `agentops doctor` when the CLI is available to summarize readiness and next action
 - use `agentops next`, `agentops start <task-id>`, `agentops complete --verification <note>`, and `agentops block --reason <note>` when the CLI is available
+- use `agentops maintenance` for a read-only wake-up check before scheduled or unattended work
 - inspect recent diffs before editing
 - trust durable memory only when it is still consistent with the codebase
 - update state before handing off

@@ -7,6 +7,7 @@ Use these checks when the project includes agent workflows, automations, or high
 - The agent reads the project contract before non-trivial work.
 - The agent selects one bounded task instead of broad multitasking.
 - The agent uses stable task IDs when moving work between ready, active, blocked, verify, and done.
+- The maintenance check is read-only and does not move tasks or edit files.
 - The agent checks permission gates before risky actions.
 - The agent updates state, memory, queue, or session logs when durable context changes.
 - The agent runs the narrowest meaningful verification before handoff.

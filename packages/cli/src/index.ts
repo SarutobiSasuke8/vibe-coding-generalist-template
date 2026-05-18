@@ -3,6 +3,7 @@
 import { cwd, exit } from "node:process";
 import { runChecks } from "./checks.js";
 import { runDoctor } from "./doctor.js";
+import { runMaintenance } from "./maintenance.js";
 import { blockTask, completeTask, getNextTask, listTasks, loadQueue, startTask } from "./tasks.js";
 
 type ParsedArgs = {
@@ -12,6 +13,7 @@ type ParsedArgs = {
   strict: boolean;
   rootDir: string;
   note?: string;
+  includeTests: boolean;
 };
 
 function parseArgs(argv: string[]): ParsedArgs {
@@ -22,6 +24,7 @@ function parseArgs(argv: string[]): ParsedArgs {
   let strict = false;
   let rootDir = cwd();
   let note: string | undefined;
+  let includeTests = true;
 
   while (args.length > 0) {
     const arg = args.shift();
@@ -33,12 +36,14 @@ function parseArgs(argv: string[]): ParsedArgs {
       rootDir = args.shift() ?? rootDir;
     } else if (arg === "--note" || arg === "--verification" || arg === "--reason") {
       note = args.shift() ?? "";
+    } else if (arg === "--no-tests") {
+      includeTests = false;
     } else if (arg) {
       rest.push(arg);
     }
   }
 
-  return { command, rest, json, strict, rootDir, note };
+  return { command, rest, json, strict, rootDir, note, includeTests };
 }
 
 function printHelp() {
@@ -54,6 +59,7 @@ Usage:
   agentops init
   agentops sync
   agentops doctor [--json] [--root <path>]
+  agentops maintenance [--json] [--no-tests] [--root <path>]
 
 Implemented:
   check   Validate the repo agent operating layer.
@@ -63,6 +69,7 @@ Implemented:
   start   Move a ready task to active and update agent state.
   complete Move the active task to done with a verification note.
   block   Move the active task to blocked with a reason.
+  maintenance Run the read-only autonomous maintenance check.
 
 Scaffolded:
   init    Planned initializer for template files.
@@ -174,6 +181,32 @@ if (parsed.command === "complete") {
 if (parsed.command === "block") {
   const result = blockTask(parsed.rootDir, parsed.note ?? "");
   console.log(result.message);
+  exit(result.ok ? 0 : 1);
+}
+
+if (parsed.command === "maintenance") {
+  const result = runMaintenance({ rootDir: parsed.rootDir, includeTests: parsed.includeTests });
+  if (parsed.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`Agentops maintenance: ${result.ok ? "pass" : "fail"} (${result.readiness})`);
+    console.log("Read-only: yes");
+    console.log("");
+    console.log("Summary:");
+    console.log(`- Active task: ${result.summary.activeTask}`);
+    console.log(`- Next ready task: ${result.summary.nextReadyTask}`);
+    console.log(`- Task count: ${result.summary.taskCount}`);
+    console.log("");
+    console.log("Steps:");
+    for (const step of result.steps) {
+      console.log(`- ${step.status.toUpperCase()} ${step.name}: ${step.detail}`);
+    }
+    console.log("");
+    console.log("Next actions:");
+    for (const action of result.nextActions) {
+      console.log(`- ${action}`);
+    }
+  }
   exit(result.ok ? 0 : 1);
 }
 
