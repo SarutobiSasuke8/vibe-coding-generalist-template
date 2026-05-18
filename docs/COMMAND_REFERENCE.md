@@ -37,7 +37,34 @@ Cross-platform version of the current validation script. It should support human
 
 ### `agentops init`
 
-Initialize a repo from the template. Early versions can copy files and prompt for project metadata. Later versions should support minimal, standard, and full modes.
+Initialize a repo from the template by filling the main project placeholders.
+
+```bash
+agentops init \
+  --name "Recipe Ledger" \
+  --type "web app" \
+  --primary-user "home cooks" \
+  --stage "prototype" \
+  --goal "Help home cooks save reliable recipes and rebuild grocery lists." \
+  --package-manager "npm" \
+  --install "npm install" \
+  --dev "npm run dev" \
+  --test "npm test" \
+  --lint "npm run lint" \
+  --build "npm run build"
+```
+
+The command updates:
+
+- `AGENTS.md`
+- `docs/PROJECT_BRIEF.md`
+- `agentops.config.yml`
+- `Agent State/agent-state.md`
+- `Agent State/task-queue.md`
+- `Memory/project-facts.md`
+- `Memory/decisions.md`
+
+The first version is deliberately non-interactive so agents and CI can use it predictably.
 
 ### `agentops sync`
 

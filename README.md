@@ -110,7 +110,8 @@ Current CLI status:
 - `agentops status`, `next`, `start`, `complete`, and `block` operate the markdown task queue.
 - `agentops maintenance` runs the first read-only autonomous maintenance check.
 - `.github/workflows/agent-maintenance.yml` schedules the read-only maintenance check weekly and supports manual runs.
-- `agentops init` and `agentops sync` are still scaffolded.
+- `agentops init` fills the main template placeholders for a real project.
+- `agentops sync` is still scaffolded.
 
 The current source of truth remains the Markdown template plus PowerShell checks. CLI commands should call shared validation logic rather than replacing the file-based contract with hidden state.
 

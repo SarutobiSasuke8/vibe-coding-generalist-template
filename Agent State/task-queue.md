@@ -25,6 +25,7 @@ Use this queue for agent-executable work. Keep tasks concrete enough that an orc
 ## Ready
 
 - [ ] [A-004] #task Add maintenance report artifact support.
+- [ ] [A-005] #task Add interactive prompts or config-file input for `agentops init`.
 
 ## Active
 

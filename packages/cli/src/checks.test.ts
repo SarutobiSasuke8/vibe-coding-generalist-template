@@ -5,6 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { runChecks } from "./checks.js";
 import { runDoctor } from "./doctor.js";
+import { runInit } from "./init.js";
 import { runMaintenance } from "./maintenance.js";
 import { blockTask, completeTask, getNextTask, startTask } from "./tasks.js";
 
@@ -78,9 +79,38 @@ test("maintenance reports read-only readiness without npm tests", () => {
   const result = runMaintenance({ rootDir: root, includeTests: false });
 
   assert.equal(result.readOnly, true);
-  assert.equal(result.summary.taskCount, 1);
+  assert.equal(result.summary.taskCount, 2);
   assert.ok(result.steps.some((step) => step.name === "doctor"));
   assert.ok(result.steps.some((step) => step.name === "npm-test" && step.status === "skip"));
+});
+
+test("init fills core project placeholders", () => {
+  const root = makeTempRepo();
+  writeMinimalValidRepo(root);
+  writeMinimalAgentRuntime(root);
+  writeInitTargets(root);
+
+  const result = runInit({
+    rootDir: root,
+    name: "Recipe Ledger",
+    type: "web app",
+    primaryUser: "home cooks",
+    stage: "prototype",
+    goal: "Help home cooks save reliable recipes and rebuild grocery lists.",
+    packageManager: "npm",
+    install: "npm install",
+    dev: "npm run dev",
+    test: "npm test",
+    lint: "npm run lint",
+    build: "npm run build"
+  });
+
+  assert.equal(result.ok, true);
+  assert.ok(result.changedFiles.includes("AGENTS.md"));
+  assert.match(readFileSync(join(root, "AGENTS.md"), "utf8"), /Project name: `Recipe Ledger`/);
+  assert.match(readFileSync(join(root, "agentops.config.yml"), "utf8"), /name: "Recipe Ledger"/);
+  assert.match(readFileSync(join(root, "Memory", "project-facts.md"), "utf8"), /Project name: Recipe Ledger/);
+  assert.match(readFileSync(join(root, "Agent State", "task-queue.md"), "utf8"), /\[A-001\] #task Replace remaining project setup placeholders/);
 });
 
 function makeTempRepo() {
@@ -172,6 +202,8 @@ function writeMinimalAgentRuntime(root: string) {
     join(root, "Agent State", "task-queue.md"),
     [
       "# Agent Task Queue",
+      "## Inbox",
+      "- [ ] [A-999] #task Placeholder.",
       "## Active",
       "No active agent task.",
       "## Verify",
@@ -189,4 +221,120 @@ function writeMinimalAgentRuntime(root: string) {
   writeFileSync(join(root, "docs", "AGENT_TOOL_REGISTRY.md"), "# Tool Registry\n");
   writeFileSync(join(root, "docs", "AGENT_PERMISSION_GATES.md"), "# Permission Gates\n");
   writeFileSync(join(root, "QA", "AGENT_BEHAVIOR_CHECKS.md"), "# Agent Behavior Checks\n");
+}
+
+function writeInitTargets(root: string) {
+  writeFileSync(
+    join(root, "AGENTS.md"),
+    [
+      "# AGENTS.md - Canonical Agent Contract",
+      "## Project Identity",
+      "- Project name: `TODO`",
+      "- Project type: `TODO`",
+      "- Primary user: `TODO`",
+      "- Current stage: `prototype | active build | maintenance | archived`",
+      "## Product Goal",
+      "```text",
+      "TODO: one or two paragraphs explaining what good looks like, who it helps, and what feeling it should create.",
+      "```",
+      "## Non-Negotiable Standard",
+      "## Operating Loop",
+      "## Agentic Runtime Layer",
+      "## Core Principles",
+      "Think Before Coding",
+      "Simplicity First",
+      "Surgical Changes",
+      "Goal-Driven Execution",
+      "Vibe Coding Quality Bar",
+      "## Commands",
+      "```bash",
+      "# Install dependencies",
+      "TODO",
+      "# Run development server",
+      "TODO",
+      "# Run tests",
+      "TODO",
+      "# Run lint/type checks",
+      "TODO",
+      "# Check agent behavior scaffold",
+      "./scripts/check-agent-behavior.ps1",
+      "# Build",
+      "TODO",
+      "```",
+      "- Package manager: `TODO`",
+      "## Verification Policy",
+      "## Agent Coordination",
+      "## Handoff Standard"
+    ].join("\n")
+  );
+  writeFileSync(
+    join(root, "agentops.config.yml"),
+    [
+      "schemaVersion: 1",
+      "templateVersion: 0.1.0",
+      "project:",
+      "  name: TODO",
+      "  type: TODO",
+      "  stage: prototype",
+      "  primaryUser: TODO",
+      "commands:",
+      "  install: TODO",
+      "  dev: TODO",
+      "  test: TODO",
+      "  lint: TODO",
+      "  build: TODO"
+    ].join("\n")
+  );
+  writeFileSync(
+    join(root, "Agent State", "agent-state.md"),
+    [
+      "# Agent State",
+      "## Current Goal",
+      "TODO: Define the concrete outcome the orchestrator is trying to achieve.",
+      "## Active Task",
+      "- Status: inbox",
+      "## Last Action",
+      "TODO",
+      "## Next Action",
+      "TODO",
+      "## Blockers",
+      "- TODO",
+      "## Verification Status",
+      "- Current check:"
+    ].join("\n")
+  );
+  writeFileSync(
+    join(root, "docs", "PROJECT_BRIEF.md"),
+    [
+      "# Project Brief",
+      "## Summary",
+      "TODO: What is this project in one paragraph?",
+      "## Vibe",
+      "- Desired feeling: TODO",
+      "- Reference products / experiences: TODO",
+      "- Anti-vibe: TODO",
+      "- First impression target: TODO",
+      "## User",
+      "- Primary user: TODO",
+      "- Secondary users: TODO",
+      "- User skill level: TODO",
+      "- Context of use: TODO",
+      "## Problem",
+      "TODO: What pain, opportunity, or workflow does this address?",
+      "## Product Promise",
+      "TODO: What should users be able to trust this product to do?",
+      "## Constraints",
+      "- Stack: TODO",
+      "## Open Questions",
+      "- [ ] #task TODO"
+    ].join("\n")
+  );
+  writeFileSync(
+    join(root, "Memory", "project-facts.md"),
+    ["# Project Facts", "## Facts", "- TODO"].join("\n")
+  );
+  writeFileSync(
+    join(root, "Memory", "decisions.md"),
+    ["# Decisions", "| Date | Decision | Reason | Revisit When |", "|---|---|---|---|", "| TODO | TODO | TODO | TODO |"].join("\n")
+  );
 }

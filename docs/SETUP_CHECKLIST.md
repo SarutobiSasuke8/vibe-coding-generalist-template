@@ -5,6 +5,7 @@ Use this after creating a new repository from this template.
 ## Required
 
 - [ ] Replace project identity fields in `AGENTS.md`.
+- [ ] Run `agentops init` when using the CLI setup path.
 - [ ] Fill in `docs/PROJECT_BRIEF.md`.
 - [ ] Replace command placeholders in `AGENTS.md`.
 - [ ] Review `docs/PERSONA_COUNCIL.md` and decide how much of the persona council to keep active.

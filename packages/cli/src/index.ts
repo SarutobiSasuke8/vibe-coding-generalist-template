@@ -3,6 +3,7 @@
 import { cwd, exit } from "node:process";
 import { runChecks } from "./checks.js";
 import { runDoctor } from "./doctor.js";
+import { runInit } from "./init.js";
 import { runMaintenance } from "./maintenance.js";
 import { blockTask, completeTask, getNextTask, listTasks, loadQueue, startTask } from "./tasks.js";
 
@@ -14,6 +15,7 @@ type ParsedArgs = {
   rootDir: string;
   note?: string;
   includeTests: boolean;
+  values: Record<string, string>;
 };
 
 function parseArgs(argv: string[]): ParsedArgs {
@@ -25,6 +27,7 @@ function parseArgs(argv: string[]): ParsedArgs {
   let rootDir = cwd();
   let note: string | undefined;
   let includeTests = true;
+  const values: Record<string, string> = {};
 
   while (args.length > 0) {
     const arg = args.shift();
@@ -38,12 +41,15 @@ function parseArgs(argv: string[]): ParsedArgs {
       note = args.shift() ?? "";
     } else if (arg === "--no-tests") {
       includeTests = false;
+    } else if (arg?.startsWith("--")) {
+      const key = arg.slice(2);
+      values[key] = args.shift() ?? "";
     } else if (arg) {
       rest.push(arg);
     }
   }
 
-  return { command, rest, json, strict, rootDir, note, includeTests };
+  return { command, rest, json, strict, rootDir, note, includeTests, values };
 }
 
 function printHelp() {
@@ -56,7 +62,7 @@ Usage:
   agentops start [task-id] [--root <path>]
   agentops complete --verification <note> [--root <path>]
   agentops block --reason <note> [--root <path>]
-  agentops init
+  agentops init --name <name> --type <type> --primary-user <user> --stage <stage> --goal <goal> --package-manager <pm> --install <cmd> --dev <cmd> --test <cmd> --lint <cmd> --build <cmd>
   agentops sync
   agentops doctor [--json] [--root <path>]
   agentops maintenance [--json] [--no-tests] [--root <path>]
@@ -69,10 +75,10 @@ Implemented:
   start   Move a ready task to active and update agent state.
   complete Move the active task to done with a verification note.
   block   Move the active task to blocked with a reason.
+  init    Fill the main template placeholders for a real project.
   maintenance Run the read-only autonomous maintenance check.
 
 Scaffolded:
-  init    Planned initializer for template files.
   sync    Planned adapter sync from AGENTS.md.
 `);
 }
@@ -210,7 +216,36 @@ if (parsed.command === "maintenance") {
   exit(result.ok ? 0 : 1);
 }
 
-if (["init", "sync"].includes(parsed.command)) {
+if (parsed.command === "init") {
+  const result = runInit({
+    rootDir: parsed.rootDir,
+    name: parsed.values.name ?? "",
+    type: parsed.values.type ?? "",
+    primaryUser: parsed.values["primary-user"] ?? parsed.values.primaryUser ?? "",
+    stage: parsed.values.stage ?? "",
+    goal: parsed.values.goal ?? "",
+    packageManager: parsed.values["package-manager"] ?? parsed.values.packageManager ?? "",
+    install: parsed.values.install ?? "",
+    dev: parsed.values.dev ?? "",
+    test: parsed.values.test ?? "",
+    lint: parsed.values.lint ?? "",
+    build: parsed.values.build ?? ""
+  });
+  if (parsed.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(result.message);
+    if (result.changedFiles.length > 0) {
+      console.log("Changed files:");
+      for (const file of result.changedFiles) {
+        console.log(`- ${file}`);
+      }
+    }
+  }
+  exit(result.ok ? 0 : 1);
+}
+
+if (["sync"].includes(parsed.command)) {
   notImplemented(parsed.command);
   exit(0);
 }
