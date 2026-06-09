@@ -1,8 +1,14 @@
-Read `AGENTS.md`, `personas/code-reviewer-maintainability.md`, and `personas/qa-acceptance-tester.md`.
+---
+description: Review recent changes through the Code Reviewer and QA lenses
+---
 
-Run `git diff HEAD~1 --name-only` to identify recently changed files, then read the relevant diffs.
+Identify what to review: `git diff` for uncommitted work, otherwise `git diff HEAD~1` (or the range the user named).
 
-Apply the Code Reviewer and QA Acceptance Tester lenses. Report:
+Launch the `code-reviewer` and `qa-acceptance-tester` subagents in parallel (one message, two Task calls). Give each: the diff scope, the goal of the change as you understand it, and a request for findings ordered by severity. The subagents load their persona definitions themselves and cannot see this conversation, so the prompt must be self-contained.
+
+If subagents are unavailable, read `personas/code-reviewer-maintainability.md` and `personas/qa-acceptance-tester.md` (check `personas/optional/` if not in `personas/`) and apply both lenses in-context.
+
+Synthesize the two reports into one review:
 
 1. **Correctness risks** — logic errors, edge cases, silent failures
 2. **Missing states** — loading, empty, error states that affect the experience

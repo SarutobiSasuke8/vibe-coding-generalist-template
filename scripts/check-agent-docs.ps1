@@ -23,6 +23,7 @@ $requiredFiles = @(
     "docs/RELEASE_CHECKLIST.md",
     "docs/SETUP_CHECKLIST.md",
     "docs/SESSION_LOGGING.md",
+    "docs/SUBAGENTS.md",
     "docs/WHY.md",
     "TODO.md",
     "ROADMAP.md",
@@ -38,7 +39,10 @@ $requiredFiles = @(
     "personas/agent-council-protocol.md",
     "personas/head-of-product-vibe-coding.md",
     "personas/cto-vibe-coding.md",
-    "personas/qa-acceptance-tester.md"
+    "personas/qa-acceptance-tester.md",
+    ".claude/agents/head-of-product.md",
+    ".claude/agents/cto.md",
+    ".claude/agents/qa-acceptance-tester.md"
 )
 
 # Personas that init.ps1 can demote to personas/optional/ when the user picks
@@ -256,6 +260,36 @@ foreach ($item in $portableTemplateFiles) {
                 $relative = Resolve-Path -LiteralPath $file.FullName -Relative
                 $errors.Add("Template file contains non-portable phrase '$phrase': $relative")
             }
+        }
+    }
+}
+
+# Slash commands in .claude/commands/ must be listed in AGENTS.md so the
+# canonical contract never drifts from the actual command set.
+$commandsDir = Join-Path $root ".claude/commands"
+if ((Test-Path -LiteralPath $commandsDir) -and ($null -ne $agentsContent)) {
+    $commandFiles = Get-ChildItem -LiteralPath $commandsDir -File -Filter "*.md"
+    foreach ($cmdFile in $commandFiles) {
+        $cmdName = "/" + [System.IO.Path]::GetFileNameWithoutExtension($cmdFile.Name)
+        if (-not $agentsContent.Contains("``$cmdName``")) {
+            $errors.Add("Slash command $cmdName exists in .claude/commands/ but is not listed in AGENTS.md")
+        }
+    }
+}
+
+# Subagents: frontmatter must declare a description and a name matching the
+# filename, or Claude Code delegation breaks silently.
+$agentsDir = Join-Path $root ".claude/agents"
+if (Test-Path -LiteralPath $agentsDir) {
+    $agentFiles = Get-ChildItem -LiteralPath $agentsDir -File -Filter "*.md"
+    foreach ($agentFile in $agentFiles) {
+        $base = [System.IO.Path]::GetFileNameWithoutExtension($agentFile.Name)
+        $content = Get-Content -Raw -LiteralPath $agentFile.FullName
+        if ($content -notmatch "(?m)^name:\s*$([regex]::Escape($base))\s*$") {
+            $errors.Add("Subagent frontmatter 'name' must match filename: .claude/agents/$base.md")
+        }
+        if ($content -notmatch "(?m)^description:\s*\S") {
+            $errors.Add("Subagent missing 'description' frontmatter: .claude/agents/$base.md")
         }
     }
 }

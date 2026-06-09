@@ -59,6 +59,23 @@ try {
     Assert-Contains $brief "Bootstrap Smoke Project is a Node app project." "generated project brief summary"
     Assert-Contains $brief "Primary user: Solo builder" "generated project brief user"
 
+    $readme = Get-Content -Raw -LiteralPath (Join-Path $tempRoot "README.md")
+    Assert-Contains $readme "# Bootstrap Smoke Project" "generated README title"
+    Assert-Contains $readme "npm install" "generated README install command"
+    Assert-Contains $readme "AGENTS.md" "generated README agent contract pointer"
+
+    $todo = Get-Content -Raw -LiteralPath (Join-Path $tempRoot "TODO.md")
+    Assert-Contains $todo "Working queue for Bootstrap Smoke Project" "generated TODO stub"
+
+    $roadmap = Get-Content -Raw -LiteralPath (Join-Path $tempRoot "ROADMAP.md")
+    Assert-Contains $roadmap "Medium-term direction for Bootstrap Smoke Project" "generated ROADMAP stub"
+
+    $index = Get-Content -Raw -LiteralPath (Join-Path $tempRoot "Session Logs/_Session Logs Index.md")
+    Assert-Contains $index "Add one row per session log" "reset session log index"
+    if ($index.Contains("Obsidian")) {
+        throw "Session log index still contains template-author residue"
+    }
+
     $stampPath = Join-Path $tempRoot ".vibe-template-version"
     $expectedVersion = (Get-Content -Raw -LiteralPath (Join-Path $sourceRoot "VERSION")).Trim()
     if (-not (Test-Path -LiteralPath $stampPath)) {
@@ -99,7 +116,8 @@ try {
         -BuildCmd "npm run build" `
         -PrimaryAgent "claude" `
         -CurrentStage "prototype" `
-        -PersonasTier "standard" | Out-Null
+        -PersonasTier "standard" `
+        -SessionLogs "committed" | Out-Null
     if ($LASTEXITCODE -ne 0) {
         throw "init.ps1 (standard tier) failed with exit code $LASTEXITCODE"
     }
@@ -135,6 +153,13 @@ try {
         if (Test-Path -LiteralPath $core) {
             throw "Standard tier left persona in personas/ when it should have moved: $p"
         }
+    }
+
+    # Committed session-log mode must replace the ignore rule with the note.
+    $gitignore = Get-Content -Raw -LiteralPath (Join-Path $standardRoot ".gitignore")
+    Assert-Contains $gitignore "committed in this project" "committed session-log gitignore note"
+    if ($gitignore -match '(?m)^Session Logs/\*\.md') {
+        throw "Committed session-log mode left an active ignore rule in .gitignore"
     }
 
     Write-Host "PowerShell init smoke test passed." -ForegroundColor Green

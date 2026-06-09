@@ -1,3 +1,7 @@
+---
+description: Draft a feature spec (goal, scope, acceptance criteria) before writing code
+---
+
 Read `AGENTS.md` and `docs/PROJECT_BRIEF.md`.
 
 Before writing any code, create a spec for the requested feature or change. The spec must include:

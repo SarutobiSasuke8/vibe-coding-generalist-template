@@ -42,6 +42,7 @@ required_files=(
     "docs/RELEASE_CHECKLIST.md"
     "docs/SETUP_CHECKLIST.md"
     "docs/SESSION_LOGGING.md"
+    "docs/SUBAGENTS.md"
     "docs/WHY.md"
     "TODO.md"
     "ROADMAP.md"
@@ -58,6 +59,9 @@ required_files=(
     "personas/head-of-product-vibe-coding.md"
     "personas/cto-vibe-coding.md"
     "personas/qa-acceptance-tester.md"
+    ".claude/agents/head-of-product.md"
+    ".claude/agents/cto.md"
+    ".claude/agents/qa-acceptance-tester.md"
 )
 
 # Personas that init can demote to personas/optional/. Either location passes.
@@ -229,6 +233,35 @@ for item in "${scan_paths[@]}"; do
         done
     done <<<"$files"
 done
+
+# Slash commands in .claude/commands/ must be listed in AGENTS.md so the
+# canonical contract never drifts from the actual command set.
+commands_dir="$root/.claude/commands"
+if [[ -d "$commands_dir" && -f "$agents_path" ]]; then
+    for cmd_file in "$commands_dir"/*.md; do
+        [[ -e "$cmd_file" ]] || continue
+        cmd_name="/$(basename "$cmd_file" .md)"
+        if ! grep -qF -- "\`$cmd_name\`" "$agents_path"; then
+            add_error "Slash command $cmd_name exists in .claude/commands/ but is not listed in AGENTS.md"
+        fi
+    done
+fi
+
+# Subagents: frontmatter must declare a description and a name matching the
+# filename, or Claude Code delegation breaks silently.
+agents_dir="$root/.claude/agents"
+if [[ -d "$agents_dir" ]]; then
+    for agent_file in "$agents_dir"/*.md; do
+        [[ -e "$agent_file" ]] || continue
+        base="$(basename "$agent_file" .md)"
+        if ! grep -qE "^name:[[:space:]]*${base}[[:space:]]*$" "$agent_file"; then
+            add_error "Subagent frontmatter 'name' must match filename: .claude/agents/$base.md"
+        fi
+        if ! grep -qE "^description:[[:space:]]*[^[:space:]]" "$agent_file"; then
+            add_error "Subagent missing 'description' frontmatter: .claude/agents/$base.md"
+        fi
+    done
+fi
 
 # Session log index references must resolve
 index_path="$root/Session Logs/_Session Logs Index.md"

@@ -25,7 +25,8 @@ param(
     [string]$BuildCmd,
     [ValidateSet("claude","codex","cursor","gemini","copilot","")][string]$PrimaryAgent = "",
     [ValidateSet("prototype","active build","maintenance","archived","")][string]$CurrentStage = "",
-    [ValidateSet("minimal","standard","full","")][string]$PersonasTier = ""
+    [ValidateSet("minimal","standard","full","")][string]$PersonasTier = "",
+    [ValidateSet("local","committed","")][string]$SessionLogs = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -179,6 +180,177 @@ To be refined.
     Write-Host "  generated docs/PROJECT_BRIEF.md" -ForegroundColor DarkGray
 }
 
+# Generated files deliberately avoid backtick characters (PowerShell's escape
+# char in here-strings). Commands use indented code blocks instead of fences.
+function Write-ForkReadme {
+    param([string]$Name, [string]$Type, [string]$Feeling, [string]$User, [string]$Stage)
+
+    $safeName = if ($Name) { $Name } else { "This project" }
+    $safeType = if ($Type) { $Type } else { "software" }
+    $safeUser = if ($User) { $User } else { "its primary user" }
+    $safeStage = if ($Stage) { $Stage } else { "prototype" }
+    $installLine = if ($InstallCmd) { $InstallCmd } else { "(not set yet - update AGENTS.md and this file)" }
+    $runLine = if ($RunCmd) { $RunCmd } else { "(not set yet)" }
+    $testLine = if ($TestCmd) { $TestCmd } else { "(not set yet)" }
+    $lintLine = if ($LintCmd) { $LintCmd } else { "(not set yet)" }
+    $buildLine = if ($BuildCmd) { $BuildCmd } else { "(not set yet)" }
+
+    $readme = @"
+# $safeName
+
+$Feeling
+
+## What this is
+
+$safeName is a $safeType project built for $safeUser. The durable context — problem, vibe, workflows, quality gates — lives in docs/PROJECT_BRIEF.md.
+
+## Commands
+
+    # Install dependencies
+    $installLine
+
+    # Run development server
+    $runLine
+
+    # Run tests
+    $testLine
+
+    # Lint / type checks
+    $lintLine
+
+    # Build
+    $buildLine
+
+## Working with AI agents
+
+This repo uses an agent operating contract:
+
+- AGENTS.md — canonical rules for every AI coding agent. Read it first.
+- docs/PROJECT_BRIEF.md — what this project is, who it serves, and what it should feel like.
+- Slash commands (Claude Code): /brief, /spec, /council, /review, /session-log, /drift-check, /handoff, /todo-triage, /retro.
+- Persona subagents (Claude Code): .claude/agents/ — isolated review lenses; see docs/SUBAGENTS.md.
+- After editing any agent instruction file, run scripts/check-agent-docs.ps1 (or the .sh twin).
+
+## Status
+
+- Stage: $safeStage
+- Working queue: see TODO.md
+- Direction: see ROADMAP.md
+
+---
+
+Built from the Vibe Coding Generalist Template (template version recorded in .vibe-template-version).
+"@
+
+    Set-Content -LiteralPath (Join-Path $root "README.md") -Value $readme -NoNewline
+    Write-Host "  generated README.md" -ForegroundColor DarkGray
+}
+
+function Write-TodoStub {
+    param([string]$Name)
+    $safeName = if ($Name) { $Name } else { "this project" }
+
+    $todo = @"
+# TODO
+
+Working queue for $safeName. Keep items concrete; promote durable direction into ROADMAP.md.
+
+## Now
+
+- [ ] Build the first vertical slice of the core workflow (see docs/PROJECT_BRIEF.md).
+
+## Soon
+
+- [ ] Refine docs/PROJECT_BRIEF.md once the first slice exists.
+- [ ] Wire up CI: rename .github/workflows/quality.yml.example to quality.yml when there are real checks to run.
+
+## Parking lot
+
+- [ ] Revisit which optional personas this project needs as it matures.
+"@
+
+    Set-Content -LiteralPath (Join-Path $root "TODO.md") -Value $todo -NoNewline
+    Write-Host "  generated TODO.md" -ForegroundColor DarkGray
+}
+
+function Write-RoadmapStub {
+    param([string]$Name)
+    $safeName = if ($Name) { $Name } else { "this project" }
+
+    $roadmap = @"
+# Roadmap
+
+Medium-term direction for $safeName. TODO.md holds the working queue; this file holds phases, decisions, and risks.
+
+## Phase 1 — First working slice
+
+- Goal: the primary user can complete the core workflow end-to-end.
+- Done when: the workflow runs with the documented commands and matches the intended vibe.
+
+## Phase 2 — Hardening
+
+- Goal: loading, empty, and error states exist; checks run in CI.
+- Done when: the quality gates in docs/PROJECT_BRIEF.md pass.
+
+## Later
+
+- Capture bigger bets here once Phase 1 ships.
+
+## Decisions
+
+| Date | Decision | Reason |
+|---|---|---|
+
+## Risks
+
+- Record real risks as they appear.
+"@
+
+    Set-Content -LiteralPath (Join-Path $root "ROADMAP.md") -Value $roadmap -NoNewline
+    Write-Host "  generated ROADMAP.md" -ForegroundColor DarkGray
+}
+
+function Write-SessionIndex {
+    $index = @'
+---
+type: session-log-index
+status: active
+mutability: living
+---
+
+# Session Logs
+
+Use this folder for durable records of meaningful AI coding sessions.
+
+## Logging Rule
+
+Create or append a session log when a session includes one or more of:
+
+- Architectural or product decisions.
+- Multiple files touched.
+- Debugging with important findings.
+- A handoff another agent or future session will need.
+- User feedback that changes project direction.
+- Any work that should not be reconstructed from chat history.
+
+Small one-line fixes do not need a session log unless the user asks.
+
+## Logs
+
+Add one row per session log, newest first. If this project commits its session logs, use markdown links (the drift check validates that linked files exist); if logs are local-only, use plain filenames, since the linked files will not exist in CI or fresh clones.
+
+| Date | File | Summary |
+|---|---|---|
+
+## Current Themes
+
+Update this section as durable themes emerge from the logs. Keep entries non-sensitive: this index is committed even when the logs themselves are not.
+'@
+
+    Set-Content -LiteralPath (Join-Path $root "Session Logs/_Session Logs Index.md") -Value $index -NoNewline
+    Write-Host "  reset Session Logs/_Session Logs Index.md" -ForegroundColor DarkGray
+}
+
 Write-Host ""
 Write-Host "Vibe Coding Template -- interactive setup" -ForegroundColor Cyan
 Write-Host "----------------------------------------"
@@ -215,9 +387,10 @@ if (-not $PersonasTier) {
 Write-Host ""
 Write-Host "Applying changes..." -ForegroundColor Cyan
 
-if ($ProjectName -and ($alreadyCustomized -eq $false -or $Force)) {
+$regen = (-not $alreadyCustomized) -or $Force
+
+if ($ProjectName -and $regen) {
     Replace-InFile "AGENTS.md" 'Project name: `TODO`' "Project name: ``$ProjectName``" -Literal | Out-Null
-    Replace-InFile "README.md" "# Vibe Coding Generalist Template" "# $ProjectName" -Literal | Out-Null
 }
 
 if ($ProjectType) {
@@ -240,7 +413,15 @@ if ($Vibe) {
     Replace-InFile "AGENTS.md" '(?ms)```text\r?\nTODO: one or two paragraphs.*?\r?\n```' "``````text`n$Vibe`n``````" | Out-Null
 }
 
-Write-ProjectBrief -Name $ProjectName -Type $ProjectType -Feeling $Vibe -User $PrimaryUser -Stage $CurrentStage
+if ($regen) {
+    Write-ProjectBrief -Name $ProjectName -Type $ProjectType -Feeling $Vibe -User $PrimaryUser -Stage $CurrentStage
+    Write-ForkReadme -Name $ProjectName -Type $ProjectType -Feeling $Vibe -User $PrimaryUser -Stage $CurrentStage
+    Write-TodoStub -Name $ProjectName
+    Write-RoadmapStub -Name $ProjectName
+    Write-SessionIndex
+} else {
+    Write-Host "  skipped regenerating brief/README/TODO/ROADMAP (already customized; re-run with -Force to overwrite)" -ForegroundColor Yellow
+}
 
 if ($InstallCmd) {
     Replace-InFile "AGENTS.md" '(?m)^# Install dependencies\r?\nTODO\b' "# Install dependencies`n$InstallCmd" | Out-Null
@@ -300,6 +481,16 @@ if ($tierDemotions.ContainsKey($PersonasTier) -and $tierDemotions[$PersonasTier]
     }
 }
 
+if ($SessionLogs -eq "committed") {
+    $gitignoreOld = "# Local session memory`n# Keep the folder index public, but keep actual session logs out of Git by default.`nSession Logs/*.md`n!Session Logs/_Session Logs Index.md"
+    $gitignoreNew = "# Session logs are committed in this project (chosen at init).`n# To make them local-only again, ignore `"Session Logs/*.md`" and keep the index tracked."
+    if (Replace-InFile ".gitignore" $gitignoreOld $gitignoreNew -Literal) {
+        Write-Host "  session logs will be committed (.gitignore updated)" -ForegroundColor DarkGray
+    } else {
+        Write-Host "  could not update .gitignore for committed session logs; edit the Session Logs block manually" -ForegroundColor Yellow
+    }
+}
+
 if ($PrimaryAgent) {
     Write-Host "  primary agent recorded as '$PrimaryAgent'" -ForegroundColor DarkGray
 }
@@ -328,7 +519,7 @@ if ($driftExit -eq 0) {
 Write-Host ""
 Write-Host "Next steps:"
 Write-Host "  1. Refine docs/PROJECT_BRIEF.md after the first working slice."
-Write-Host "  2. Replace TODO/ROADMAP starter items with real work."
+Write-Host "  2. Replace the generated TODO.md / ROADMAP.md starters with real work."
 Write-Host "  3. Run strict mode before the first real handoff:"
 Write-Host "       ./scripts/check-agent-docs.ps1 -Strict"
 Write-Host "  4. Make the first commit."

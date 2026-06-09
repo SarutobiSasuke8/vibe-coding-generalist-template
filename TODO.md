@@ -4,7 +4,7 @@ Use this file for actionable template work. Keep items concrete. Forks should re
 
 ## Now
 
-- [ ] #task Tag the `v0.1.0` release once this branch lands on `main` (after release checklist passes).
+- [ ] #task Tag the `v0.2.0` release once the subagents branch lands on `main` (after release checklist passes).
 
 ## Soon
 
@@ -15,6 +15,8 @@ Use this file for actionable template work. Keep items concrete. Forks should re
 
 ## Parking lot
 
+- [ ] #task Trim each persona from ~200 lines to ~80 (identity, judgment lens, good output) — the mandatory 7-section response formats fight the "no process theatre" anti-vibe.
+- [ ] #task Consider renaming `Session Logs/` to `session-logs/` (spaces in paths add quoting friction for shell-driven agents); breaking change, decide before the fork base grows.
 - [ ] #task Decide whether the long-term CLI should be called `vibe`, `agentops`, or another command.
 - [ ] #task Decide whether future CLI work lives in a separate repo or a monorepo.
 - [ ] #task Decide what future-product details belong in public docs versus local planning notes.

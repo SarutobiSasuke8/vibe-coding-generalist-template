@@ -1,3 +1,7 @@
+---
+description: End-of-session retrospective - what worked, what to codify
+---
+
 Run a lightweight end-of-session retrospective on the work done in this conversation.
 
 Steps:

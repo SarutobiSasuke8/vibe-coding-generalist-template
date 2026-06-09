@@ -30,5 +30,16 @@
   "env": {
   },
   "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/hooks/post-edit-drift-check.sh\""
+          }
+        ]
+      }
+    ]
   }
 }

@@ -6,6 +6,29 @@ The version recorded in `VERSION` is the template's own version, not the version
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-09
+
+Persona subagents, a self-enforcing drift check, and a clean-fork init. The headline: the persona council now runs as parallel, isolated, read-only Claude Code subagents instead of one model role-playing eleven voices.
+
+### Added
+
+- **Persona subagents** (`.claude/agents/`): one Claude Code subagent per persona, all read-only. Wrappers load the persona file from `personas/` or `personas/optional/` at runtime, so the tier system needs no extra configuration. New guide: `docs/SUBAGENTS.md` (what subagents are, why they beat in-context role-play for review work, when not to use them, how to add your own).
+- **Parallel council**: `/council` fans the routed personas out as parallel subagents and synthesizes one report; `/review` dispatches `code-reviewer` + `qa-acceptance-tester` the same way. The council protocol now documents both execution modes (parallel subagents in Claude Code, sequential in-context elsewhere) and a compact persona report format.
+- **Drift-check hook**: a `PostToolUse` hook in `.claude/settings.json` (`scripts/hooks/post-edit-drift-check.sh`) runs the drift check automatically whenever Claude Code edits an agent instruction file, with failures fed back as blocking feedback.
+- **Fork-ready init output**: init now generates a project `README.md`, starter `TODO.md` and `ROADMAP.md`, and a reset session-log index, so a fork no longer ships the template's own README, queue, roadmap, and log history.
+- **Session-log mode**: `--session-logs committed` / `-SessionLogs committed` switches `.gitignore` so session logs travel with the repo (recommended for teams and cloud agents); local-only remains the default. Tradeoffs documented in `docs/SESSION_LOGGING.md`.
+- **Drift-check coverage**: subagent frontmatter validation (name matches filename, description present), required core subagents, and a slash-command sync check (every `.claude/commands/*.md` must be listed in `AGENTS.md`).
+- Frontmatter `description` on every slash command for discoverability in Claude Code's command menu.
+
+### Fixed
+
+- `/review`, `/council`, and the council protocol no longer break when init demotes personas to `personas/optional/` — all references now resolve either location.
+- `AGENTS.md` slash-command list was missing `/drift-check` and `/handoff`; now listed and enforced by the drift check.
+- Session-log index shipped with the template author's own log entries and themes; now reset to a portable starter (and init resets it in forks).
+- Canonical docs referenced only the PowerShell drift-check script; both script paths are now shown everywhere.
+- README described skills as "Anthropic-hosted scripts"; corrected.
+- Init no longer regenerates the project brief on re-runs without `--force`.
+
 ## [0.1.0] - 2026-05-08
 
 First public template release. The repo is now stable enough that a stranger can fork it, run init, pass the drift check, and start a real project without author guidance.
@@ -40,5 +63,6 @@ First public template release. The repo is now stable enough that a stranger can
 - No automatic upgrade path between template versions. Forks track template changes manually for now.
 - Stack-agnostic by design -- the template ships no language or framework code.
 
-[Unreleased]: https://github.com/SarutobiSasuke8/vibe-coding-generalist-template/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/SarutobiSasuke8/vibe-coding-generalist-template/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/SarutobiSasuke8/vibe-coding-generalist-template/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/SarutobiSasuke8/vibe-coding-generalist-template/releases/tag/v0.1.0
