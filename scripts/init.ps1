@@ -383,6 +383,10 @@ if (-not $PersonasTier) {
     $tierPrompt = "Personas tier - minimal=3 (Product/CTO/QA), standard=6 (+Code Reviewer/Design/Delivery), full=all 11"
     $PersonasTier = Confirm-Choice $tierPrompt @("minimal","standard","full") "standard"
 }
+if (-not $SessionLogs) {
+    $logsPrompt = "Session logs - local=gitignored/private, committed=travel with the repo (pick committed for teams or cloud agents)"
+    $SessionLogs = Confirm-Choice $logsPrompt @("local","committed") "local"
+}
 
 Write-Host ""
 Write-Host "Applying changes..." -ForegroundColor Cyan

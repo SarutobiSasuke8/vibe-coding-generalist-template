@@ -394,6 +394,7 @@ fi
 [[ -z "$primary_agent" ]] && primary_agent=$(confirm_choice "Primary agent" "claude" claude codex cursor gemini copilot)
 [[ -z "$current_stage" ]] && current_stage=$(confirm_choice "Current stage" "prototype" prototype "active build" maintenance archived)
 [[ -z "$personas_tier" ]] && personas_tier=$(confirm_choice "Personas tier (minimal=3 Product/CTO/QA, standard=6 +Code Reviewer/Design/Delivery, full=all 11)" "standard" minimal standard full)
+[[ -z "$session_logs"  ]] && session_logs=$(confirm_choice "Session logs (local=gitignored/private, committed=travel with the repo; pick committed for teams or cloud agents)" "local" local committed)
 
 echo
 echo "Applying changes..."

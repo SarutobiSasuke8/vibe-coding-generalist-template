@@ -41,7 +41,7 @@ Choose deliberately:
 - **Local-only (default)** — solo work on one machine, or projects where logs routinely contain sensitive context.
 - **Committed** — teams, multi-machine work, or any project that uses cloud/remote agents. Redact instead of hiding: keep secrets and client names out of the logs, and let the rest travel with the repo.
 
-`scripts/init.sh --session-logs committed` (or `init.ps1 -SessionLogs committed`) applies the committed mode by adjusting `.gitignore`; the default is local-only. To switch later, edit the `Session Logs` block in `.gitignore`.
+Init asks which mode you want (default: local-only) and adjusts `.gitignore` for the committed mode; pass `--session-logs` / `-SessionLogs` to answer non-interactively. To switch later, edit the `Session Logs` block in `.gitignore`.
 
 ## When To Log
 

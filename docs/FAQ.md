@@ -100,7 +100,7 @@ Slash commands (`.claude/commands/`) are repo-local prompts that run in your cur
 
 ### Should session logs be committed or local-only?
 
-Local-only (the default) protects private context but means the logs do not survive a fresh clone, reach collaborators, or persist from cloud agent sessions (a remote container's local files are destroyed when it is reclaimed). Committed logs travel with the repo and act as real shared memory -- at the cost of needing redaction discipline. Pass `--session-logs committed` / `-SessionLogs committed` to init to switch; `docs/SESSION_LOGGING.md` has the full tradeoff.
+Local-only (the default) protects private context but means the logs do not survive a fresh clone, reach collaborators, or persist from cloud agent sessions (a remote container's local files are destroyed when it is reclaimed). Committed logs travel with the repo and act as real shared memory -- at the cost of needing redaction discipline. Init asks which you want (default: local-only); pass `--session-logs` / `-SessionLogs` to answer non-interactively. `docs/SESSION_LOGGING.md` has the full tradeoff.
 
 ## Versioning and upgrades
 
@@ -133,6 +133,10 @@ Yes. There is no language or framework code in the template. Add your stack afte
 ### Does this require any hosted services or accounts?
 
 No. Everything runs locally or in GitHub Actions. There are no API keys, no hosted dashboards, no required external services.
+
+### Why does (or doesn't) Claude Code ask before every file edit?
+
+The project `.claude/settings.json` pre-approves read-only operations (file reads, search, `git status`/`diff`/`log`, the drift check) and explicitly gates the genuinely risky ones (`git push`, `git commit`, `rm`, web access). File edits are deliberately *not* listed in the `ask` rules: project-level `ask` entries override your own permission mode, so listing `Edit`/`Write` there would force a prompt on every edit even if you enabled auto-accept. With the current setup, your chosen permission mode decides how edits are approved, and the drift-check hook still verifies agent-doc edits after the fact.
 
 ## Philosophy
 

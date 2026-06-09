@@ -16,7 +16,7 @@ Persona subagents, a self-enforcing drift check, and a clean-fork init. The head
 - **Parallel council**: `/council` fans the routed personas out as parallel subagents and synthesizes one report; `/review` dispatches `code-reviewer` + `qa-acceptance-tester` the same way. The council protocol now documents both execution modes (parallel subagents in Claude Code, sequential in-context elsewhere) and a compact persona report format.
 - **Drift-check hook**: a `PostToolUse` hook in `.claude/settings.json` (`scripts/hooks/post-edit-drift-check.sh`) runs the drift check automatically whenever Claude Code edits an agent instruction file, with failures fed back as blocking feedback.
 - **Fork-ready init output**: init now generates a project `README.md`, starter `TODO.md` and `ROADMAP.md`, and a reset session-log index, so a fork no longer ships the template's own README, queue, roadmap, and log history.
-- **Session-log mode**: `--session-logs committed` / `-SessionLogs committed` switches `.gitignore` so session logs travel with the repo (recommended for teams and cloud agents); local-only remains the default. Tradeoffs documented in `docs/SESSION_LOGGING.md`.
+- **Session-log mode**: init now asks whether session logs are local-only (default) or committed, and adjusts `.gitignore` for the committed mode (recommended for teams and cloud agents); `--session-logs` / `-SessionLogs` answers non-interactively. Tradeoffs documented in `docs/SESSION_LOGGING.md`.
 - **Drift-check coverage**: subagent frontmatter validation (name matches filename, description present), required core subagents, and a slash-command sync check (every `.claude/commands/*.md` must be listed in `AGENTS.md`).
 - Frontmatter `description` on every slash command for discoverability in Claude Code's command menu.
 
@@ -28,6 +28,7 @@ Persona subagents, a self-enforcing drift check, and a clean-fork init. The head
 - Canonical docs referenced only the PowerShell drift-check script; both script paths are now shown everywhere.
 - README described skills as "Anthropic-hosted scripts"; corrected.
 - Init no longer regenerates the project brief on re-runs without `--force`.
+- Removed `Edit` / `Write` / `NotebookEdit` from the project `ask` permission rules: project-level `ask` overrides the user's own permission mode, so the old config forced an approval prompt on every file edit regardless of auto-accept settings. Risky operations (`git push`, `git commit`, `rm`, web access) remain gated; the new drift-check hook covers agent-doc edits after the fact.
 
 ## [0.1.0] - 2026-05-08
 

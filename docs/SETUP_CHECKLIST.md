@@ -2,7 +2,7 @@
 
 Use this after creating a new repository from this template.
 
-> **Tip:** `./scripts/init.sh` (or `init.ps1`) automates most of the **Required** items below. It prompts for project name, project type, vibe, primary user, commands, primary agent, stage, and personas tier (`minimal` / `standard` / `full`); generates the brief, README, TODO, ROADMAP, and a clean session-log index; then runs the drift check. Pass `--session-logs committed` to commit session logs (recommended for teams or cloud agents). The list below is the manual fallback or post-init polish.
+> **Tip:** `./scripts/init.sh` (or `init.ps1`) automates most of the **Required** items below. It prompts for project name, project type, vibe, primary user, commands, primary agent, stage, personas tier (`minimal` / `standard` / `full`), and session-log mode (local-only or committed — pick committed for teams or cloud agents); generates the brief, README, TODO, ROADMAP, and a clean session-log index; then runs the drift check. The list below is the manual fallback or post-init polish.
 
 ## Strict mode
 
