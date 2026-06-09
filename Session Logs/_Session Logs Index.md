@@ -27,6 +27,7 @@ Add one row per session log, newest first. If this project commits its session l
 
 | Date | File | Summary |
 |---|---|---|
+| 2026-06-09 | 2026-06-09-session-log-template-review-v0.2.0.md | Full template review → v0.2.0: persona subagents, PostToolUse drift-check hook, fork-ready init, session-log mode, approval-fatigue fix |
 
 ## Current Themes
 
