@@ -1,3 +1,7 @@
+---
+description: Run the agent doc alignment check
+---
+
 Run the agent doc drift check.
 
 Steps:

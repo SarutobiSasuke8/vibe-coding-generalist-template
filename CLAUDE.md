@@ -28,9 +28,10 @@ Claude is bound by all five principles defined in `AGENTS.md`:
 - **Plan mode etiquette.** Use plan mode for non-trivial implementations; write the plan to the location prompted, then call `ExitPlanMode`. Do not silently switch from plan to edit.
 - **Hooks and settings.** Project-level Claude Code config lives in `.claude/settings.json`; per-machine overrides go in `.claude/settings.local.json` (gitignored).
 - **Slash commands.** Use `/session-log`, `/drift-check`, and `/handoff` from `.claude/commands/` for the recurring workflows in this repo.
+- **Subagents.** Persona subagents live in `.claude/agents/` — isolated, read-only reviewers. `/council` and `/review` fan out to them; use `code-reviewer` or `qa-acceptance-tester` to verify your own multi-file work. See `docs/SUBAGENTS.md`.
 - **Todos.** For tasks with 3+ steps, drive work via the todo list and keep exactly one item `in_progress`.
 - **Uncertainty.** Be explicit about what was verified vs assumed. Do not paper over confusion with fluent prose.
-- **Drift check.** After editing any agent doc, run `./scripts/check-agent-docs.ps1` (Windows) or `./scripts/check-agent-docs.sh` (macOS/Linux).
+- **Drift check.** After editing any agent doc, run `./scripts/check-agent-docs.sh` (macOS/Linux) or `./scripts/check-agent-docs.ps1` (Windows). A `PostToolUse` hook in `.claude/settings.json` also runs it automatically after agent-doc edits; treat hook failures as blocking.
 
 ## Handoff Format
 

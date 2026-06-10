@@ -10,10 +10,11 @@ Every model-specific instruction file must stay aligned with this contract:
 - `.github/copilot-instructions.md`
 - `.cursor/rules/vibe-coding-core.mdc`
 
-When this file changes, update the adapters and run:
+When this file changes, update the adapters and run the drift check:
 
-```powershell
-./scripts/check-agent-docs.ps1
+```bash
+./scripts/check-agent-docs.sh     # macOS / Linux / git-bash
+./scripts/check-agent-docs.ps1    # Windows PowerShell
 ```
 
 ## Project Identity
@@ -161,6 +162,7 @@ If verification cannot be run, say exactly why and describe the residual risk.
 - Reusable role prompts live in `personas/`.
 - Session logs live in `Session Logs/` and use `Templates/SESSION_LOG_TEMPLATE.md`.
 - Slash commands live in `.claude/commands/` and are invoked with `/command-name` in Claude Code.
+- Persona subagents for Claude Code live in `.claude/agents/`; usage guidance lives in `docs/SUBAGENTS.md`.
 
 ## Slash Commands
 
@@ -171,8 +173,14 @@ These commands are available when working in Claude Code. Invoke them with `/com
 - `/council` — run a persona council review on a task or question using `personas/agent-council-protocol.md`.
 - `/review` — review recent changes through the Code Reviewer and QA Acceptance Tester lenses.
 - `/session-log` — create or append a session log entry in `Session Logs/`.
+- `/drift-check` — run the agent doc alignment check and report the result.
+- `/handoff` — produce a structured handoff note for the current session.
 - `/todo-triage` — sort `TODO.md` into Now / Soon / Parking lot with success criteria and first actions.
 - `/retro` — end-of-session retrospective; surfaces what to codify in `AGENTS.md` and what to add to `TODO.md`.
+
+## Subagents (Claude Code)
+
+Persona subagents live in `.claude/agents/` — one isolated, read-only reviewer per persona. `/council` and `/review` fan work out to them in parallel and synthesize one report. Use a single subagent (`code-reviewer` or `qa-acceptance-tester`) to verify implementation work; reserve multi-persona fan-outs for decisions and audits with multiple risk surfaces. Other tools ignore `.claude/agents/` and use the persona files directly. See `docs/SUBAGENTS.md`.
 
 ## Optional Workflow Protocols
 
@@ -190,7 +198,7 @@ When multiple agents are involved:
 - Do not overwrite another agent's reasoning without cause.
 - Use `TODO.md` for unresolved follow-ups instead of burying them in chat.
 - Create or append a session log for meaningful multi-file, architectural, debugging, or handoff-heavy sessions.
-- Run `./scripts/check-agent-docs.ps1` after changing agent instruction files.
+- Run `./scripts/check-agent-docs.sh` (or `./scripts/check-agent-docs.ps1` on Windows) after changing agent instruction files.
 
 When multiple personas are involved, use `personas/agent-council-protocol.md` to route the work, resolve conflicts, and produce one synthesized report instead of separate persona reports.
 

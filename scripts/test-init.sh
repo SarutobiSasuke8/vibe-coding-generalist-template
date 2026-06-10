@@ -55,6 +55,24 @@ brief="$temp_root/docs/PROJECT_BRIEF.md"
 assert_contains "$brief" "Bootstrap Smoke Project is a Node app project." "generated project brief summary"
 assert_contains "$brief" "Primary user: Solo builder" "generated project brief user"
 
+readme="$temp_root/README.md"
+assert_contains "$readme" "# Bootstrap Smoke Project" "generated README title"
+assert_contains "$readme" "npm install" "generated README install command"
+assert_contains "$readme" "AGENTS.md" "generated README agent contract pointer"
+
+todo="$temp_root/TODO.md"
+assert_contains "$todo" "Working queue for Bootstrap Smoke Project" "generated TODO stub"
+
+roadmap="$temp_root/ROADMAP.md"
+assert_contains "$roadmap" "Medium-term direction for Bootstrap Smoke Project" "generated ROADMAP stub"
+
+index="$temp_root/Session Logs/_Session Logs Index.md"
+assert_contains "$index" "Add one row per session log" "reset session log index"
+if grep -qF "Obsidian" "$index"; then
+    echo "Session log index still contains template-author residue" >&2
+    exit 1
+fi
+
 stamp="$temp_root/.vibe-template-version"
 expected_version="$(tr -d '\r\n[:space:]' < "$source_root/VERSION")"
 if [[ ! -f "$stamp" ]]; then
@@ -88,7 +106,8 @@ bash "$standard_root/scripts/init.sh" \
     --build "npm run build" \
     --primary-agent "claude" \
     --current-stage "prototype" \
-    --personas-tier "standard" >/dev/null
+    --personas-tier "standard" \
+    --session-logs "committed" >/dev/null
 
 # Standard keeps Product/CTO/QA + code-reviewer + design-director + delivery-lead.
 for kept in \
@@ -120,6 +139,13 @@ for demoted in \
         exit 1
     fi
 done
+
+# Committed session-log mode must replace the ignore rule with the note.
+assert_contains "$standard_root/.gitignore" "committed in this project" "committed session-log gitignore note"
+if grep -qE '^Session Logs/\*\.md' "$standard_root/.gitignore"; then
+    echo "Committed session-log mode left an active ignore rule in .gitignore" >&2
+    exit 1
+fi
 
 bash "$standard_root/scripts/check-agent-docs.sh"
 

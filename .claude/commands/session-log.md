@@ -1,3 +1,7 @@
+---
+description: Create or append a session log entry
+---
+
 Read `docs/SESSION_LOGGING.md` and `Templates/SESSION_LOG_TEMPLATE.md`.
 
 Create a session log entry for this session in `Session Logs/` using the template format and today's date in the filename (e.g. `YYYY-MM-DD-session-log-brief-title.md`).

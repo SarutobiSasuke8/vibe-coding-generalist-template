@@ -1,3 +1,7 @@
+---
+description: Produce a structured handoff note for the current session
+---
+
 Produce a handoff in the AGENTS.md standard format for the work done in this session.
 
 Steps:

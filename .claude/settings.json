@@ -17,9 +17,6 @@
       "Bash(./scripts/check-agent-docs.sh:*)"
     ],
     "ask": [
-      "Edit",
-      "Write",
-      "NotebookEdit",
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(rm:*)",
@@ -30,5 +27,16 @@
   "env": {
   },
   "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/hooks/post-edit-drift-check.sh\""
+          }
+        ]
+      }
+    ]
   }
 }

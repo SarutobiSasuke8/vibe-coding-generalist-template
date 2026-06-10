@@ -10,7 +10,7 @@ You can edit by hand. `docs/SETUP_CHECKLIST.md` walks the manual path. The init 
 
 ### What does init actually change?
 
-It writes project identity, commands, and stage into `AGENTS.md`, generates a starter `docs/PROJECT_BRIEF.md`, sets the project name in `README.md`, demotes personas the chosen tier does not keep into `personas/optional/`, and runs `scripts/check-agent-docs.*` to confirm everything still aligns. It does not touch Git, install dependencies, or modify settings.
+It writes project identity, commands, and stage into `AGENTS.md`; generates a starter `docs/PROJECT_BRIEF.md`, a project `README.md`, and starter `TODO.md` / `ROADMAP.md` files; resets the session log index; demotes personas the chosen tier does not keep into `personas/optional/`; applies the `--session-logs` choice (local-only by default, or committed) to `.gitignore`; and runs `scripts/check-agent-docs.*` to confirm everything still aligns. It does not run Git commands or install dependencies.
 
 ### Can I re-run init?
 
@@ -52,7 +52,21 @@ When the question is too narrow for "generalist coding agent" to be the right vo
 
 ### Can I edit a persona, or write my own?
 
-Yes -- they are reusable role prompts, not framework files. Match the existing shape: a short role definition, the kind of judgment the persona applies, and what good output looks like. Drop new personas into `personas/` (or `personas/optional/` for tier-specific ones) and update `personas/README.md` if discoverability matters.
+Yes -- they are reusable role prompts, not framework files. Match the existing shape: a short role definition, the kind of judgment the persona applies, and what good output looks like. Drop new personas into `personas/` (or `personas/optional/` for tier-specific ones) and update `personas/README.md` if discoverability matters. If you want Claude Code to run it as an isolated reviewer, add a subagent wrapper in `.claude/agents/` following the existing pattern.
+
+## Subagents
+
+### What are the persona subagents?
+
+Each persona has a thin wrapper in `.claude/agents/` that Claude Code runs as a **subagent**: a separate agent instance with its own context window, a clean view of the persona file, and a read-only tool set. `/council` fans the relevant personas out as parallel subagents and synthesizes one report; `/review` does the same with `code-reviewer` and `qa-acceptance-tester`. See `docs/SUBAGENTS.md` for the full how/when/why.
+
+### Why not just ask Claude to "act as the QA persona"?
+
+That works, but the subagent version is structurally better for review work: it does not inherit the conversation's momentum (so it judges the work cold), its file-reading happens in its own context (so a 20-file QA pass does not crowd out your session), it can run in parallel with other personas, and its tool list physically prevents it from "helpfully" editing the code it is reviewing.
+
+### Do subagents replace the persona files?
+
+No. The persona files in `personas/` stay the single source of truth -- the wrappers load them at runtime from `personas/` or `personas/optional/`. Edit the persona and the subagent picks it up. Other tools (Codex, Cursor, Gemini, Copilot) ignore `.claude/agents/` and use the persona files directly.
 
 ## Drift check and strict mode
 
@@ -80,9 +94,13 @@ When the next agent (you or someone else) would otherwise have to ask "why is it
 
 `AGENTS.md` is for repeated mistakes and durable conventions: when you have corrected the same agent twice for the same thing, codify it. `TODO.md` is the working queue -- transient items, current sprint, immediate follow-ups. `ROADMAP.md` is the medium-term direction with phases, decisions, and risks. If a TODO survives more than two weeks, it probably belongs on the roadmap.
 
-### What's the difference between slash commands and skills?
+### What's the difference between slash commands, subagents, and skills?
 
-Slash commands are repo-local Markdown files in `.claude/commands/` -- they ship with every fork and run in Claude Code. Skills are Anthropic-hosted scripts that load on invocation; they appear in Claude Code's available-skills list. When both exist with the same name, they typically delegate to the same underlying file. Slash commands are the safer bet for "every fork should have this."
+Slash commands (`.claude/commands/`) are repo-local prompts that run in your current conversation. Subagents (`.claude/agents/`) are repo-local agent definitions that run in their own isolated context with their own tool restrictions. Skills are reusable instruction packages (`SKILL.md` files from plugins or user config) that Claude loads on demand; they appear in Claude Code's available-skills list. Repo-local commands and subagents ship with every fork, which makes them the safer bet for "every fork should have this."
+
+### Should session logs be committed or local-only?
+
+Local-only (the default) protects private context but means the logs do not survive a fresh clone, reach collaborators, or persist from cloud agent sessions (a remote container's local files are destroyed when it is reclaimed). Committed logs travel with the repo and act as real shared memory -- at the cost of needing redaction discipline. Init asks which you want (default: local-only); pass `--session-logs` / `-SessionLogs` to answer non-interactively. `docs/SESSION_LOGGING.md` has the full tradeoff.
 
 ## Versioning and upgrades
 
@@ -115,6 +133,10 @@ Yes. There is no language or framework code in the template. Add your stack afte
 ### Does this require any hosted services or accounts?
 
 No. Everything runs locally or in GitHub Actions. There are no API keys, no hosted dashboards, no required external services.
+
+### Why does (or doesn't) Claude Code ask before every file edit?
+
+The project `.claude/settings.json` pre-approves read-only operations (file reads, search, `git status`/`diff`/`log`, the drift check) and explicitly gates the genuinely risky ones (`git push`, `git commit`, `rm`, web access). File edits are deliberately *not* listed in the `ask` rules: project-level `ask` entries override your own permission mode, so listing `Edit`/`Write` there would force a prompt on every edit even if you enabled auto-accept. With the current setup, your chosen permission mode decides how edits are approved, and the drift-check hook still verifies agent-doc edits after the fact.
 
 ## Philosophy
 

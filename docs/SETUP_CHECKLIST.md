@@ -2,7 +2,7 @@
 
 Use this after creating a new repository from this template.
 
-> **Tip:** `./scripts/init.sh` (or `init.ps1`) automates most of the **Required** items below. It prompts for project name, project type, vibe, primary user, commands, primary agent, stage, and personas tier (`minimal` / `standard` / `full`), then runs the drift check. The list below is the manual fallback or post-init polish.
+> **Tip:** `./scripts/init.sh` (or `init.ps1`) automates most of the **Required** items below. It prompts for project name, project type, vibe, primary user, commands, primary agent, stage, personas tier (`minimal` / `standard` / `full`), and session-log mode (local-only or committed — pick committed for teams or cloud agents); generates the brief, README, TODO, ROADMAP, and a clean session-log index; then runs the drift check. The list below is the manual fallback or post-init polish.
 
 ## Strict mode
 
@@ -24,7 +24,8 @@ The public template repo is *expected* to fail strict mode -- it ships with `TOD
 - [ ] Update `README.md` with the actual project name and usage.
 - [ ] Review persona files and decide whether to keep private frontmatter.
 - [ ] Decide which personas are active for this project and whether to use the full council protocol.
-- [ ] Decide whether session logs should stay local-only or whether this project intentionally publishes selected logs.
+- [ ] Decide whether session logs stay local-only (default) or are committed — see the tradeoff in `docs/SESSION_LOGGING.md`; teams and cloud-agent workflows should commit them.
+- [ ] Read `docs/SUBAGENTS.md` so you know when to fan work out to the persona subagents and when not to.
 - [ ] Create the first local session log when the initial project setup is complete.
 - [ ] Run strict mode: `./scripts/check-agent-docs.ps1 -Strict` on Windows or `./scripts/check-agent-docs.sh --strict` where Bash is available.
 - [ ] Make the first commit.

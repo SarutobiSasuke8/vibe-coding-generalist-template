@@ -1,3 +1,7 @@
+---
+description: Summarize current project state from AGENTS.md and the project brief
+---
+
 Read `AGENTS.md` and `docs/PROJECT_BRIEF.md`.
 
 Summarize the current project state in one short response:

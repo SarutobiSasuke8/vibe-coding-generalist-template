@@ -1,3 +1,7 @@
+---
+description: Sort TODO.md into Now / Soon / Parking lot with success criteria
+---
+
 Read `TODO.md`. If it does not exist, say so and stop.
 
 Triage every item into one of three buckets:

@@ -44,6 +44,10 @@ Promotion is a one-line `git mv`; no other config changes needed.
 
 - `agent-council-protocol.md` - routing, sequence, conflict resolution, and shared report format for multi-persona work.
 
+## Claude Code Subagents
+
+Each persona has a thin subagent wrapper in `.claude/agents/` so Claude Code can run it as an isolated, read-only reviewer (and run several in parallel for council work). The wrappers load the persona file from `personas/` or `personas/optional/`, so the tier system needs no extra configuration. Persona files stay the single source of truth: edit the persona, and the subagent picks it up. See `docs/SUBAGENTS.md`.
+
 ## Template Safety
 
 These personas are repo-neutral. They should not include private vault links, personal owner fields, or company-specific claims. `aegis-defensive-security.md` is a defensive security persona for the current repository and local development workflow, not a company-branded role.

@@ -1,6 +1,6 @@
 # Vibe Coding Generalist Template
 
-A forkable starter for AI-assisted software projects. Aligns Claude Code, Codex, Cursor, Gemini, and Copilot to one operating contract, ships an 11-persona council, and prevents the most common ways forks ship half-configured.
+A forkable starter for AI-assisted software projects. Aligns Claude Code, Codex, Cursor, Gemini, and Copilot to one operating contract, ships an 11-persona council that runs as parallel Claude Code subagents, and prevents the most common ways forks ship half-configured.
 
 ## Quickstart
 
@@ -19,12 +19,14 @@ Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.
 
 - **One operating contract** -- `AGENTS.md` is canonical; `CLAUDE.md` / `CODEX.md` / `GEMINI.md` / `.github/copilot-instructions.md` / `.cursor/rules/vibe-coding-core.mdc` are thin tool-specific adapters that point at it.
 - **Persona council** -- 11 reusable role prompts (Product, CTO, QA + 8 optional) and an orchestration protocol so multi-perspective work produces one synthesized report instead of eleven.
+- **Persona subagents** -- every persona ships as a Claude Code subagent in `.claude/agents/`: isolated, read-only reviewers that `/council` and `/review` fan out to in parallel. See [`docs/SUBAGENTS.md`](docs/SUBAGENTS.md) for when (and when not) to use them.
+- **Self-enforcing drift check** -- a `PostToolUse` hook in `.claude/settings.json` runs the drift check automatically whenever Claude Code edits an agent instruction file, so alignment does not depend on anyone remembering to run a script.
 - **Project context** -- `docs/PROJECT_BRIEF.md` for the durable "what is this for" doc; see [`docs/examples/PROJECT_BRIEF.example.md`](docs/examples/PROJECT_BRIEF.example.md) for what filled-in looks like.
 - **Product philosophy** -- [`docs/WHY.md`](docs/WHY.md) explains why the template exists and what problem it solves.
 - **Release spine** -- `VERSION`, [`CHANGELOG.md`](CHANGELOG.md), and [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) define the path to a trustworthy public template release.
 - **Session memory** -- append-only `Session Logs/` with a template, index, and clear "when to log" rule.
 - **Drift check** -- `scripts/check-agent-docs.ps1` and `.sh` enforce that adapters stay slim, required headings exist, and (in `--strict` / `-Strict` mode) placeholders are replaced. CI runs the standard check on every PR; run strict locally after init in your fork. See [`docs/FAQ.md`](docs/FAQ.md#drift-check-and-strict-mode) for the full rule list.
-- **Claude Code scaffolding** -- `.claude/settings.json` with read-only Bash defaults plus slash commands `/brief`, `/spec`, `/council`, `/review`, `/session-log`, `/drift-check`, `/handoff`, `/todo-triage`, `/retro`.
+- **Claude Code scaffolding** -- `.claude/settings.json` with read-only Bash defaults and the drift-check hook, plus slash commands `/brief`, `/spec`, `/council`, `/review`, `/session-log`, `/drift-check`, `/handoff`, `/todo-triage`, `/retro`.
 - **PR template** -- matches the AGENTS.md handoff format (Change / Files / Verification / Risks / Session log).
 
 ## Conventions in 60 seconds
@@ -37,11 +39,13 @@ Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.
 - Multi-persona reviews use `personas/agent-council-protocol.md`.
 - Meaningful sessions get a log under `Session Logs/`. See `docs/SESSION_LOGGING.md`.
 
-## Slash commands vs. skills
+## Slash commands, subagents, and skills
 
 **Slash commands** are repo-local `.md` files in `.claude/commands/`. They run in Claude Code exactly as written and are checked into the repo, so every fork gets them automatically.
 
-**Skills** are Anthropic-hosted scripts that Claude Code loads on invocation. They appear in the available-skills list in Claude Code's context. Many overlap in name with slash commands - when both exist, they point at the same underlying `.claude/commands/` file.
+**Subagents** are repo-local `.md` files in `.claude/agents/`: separate agent instances with their own system prompt, context window, and tool restrictions. This template ships one per persona, all read-only. `/council` and `/review` fan out to them in parallel; Claude can also delegate to them on its own based on their descriptions. [`docs/SUBAGENTS.md`](docs/SUBAGENTS.md) covers the how/when/why.
+
+**Skills** are reusable instruction packages (`SKILL.md` files from plugins, user config, or the Claude Code distribution) that Claude loads on demand. They appear in the available-skills list in Claude Code's context. Repo-local slash commands are the safer bet for "every fork should have this."
 
 Commands in this template:
 
@@ -75,7 +79,7 @@ For the full FAQ see [`docs/FAQ.md`](docs/FAQ.md). The short version:
 
 ```text
 .
-+-- .claude/                       # Claude Code project config + slash commands
++-- .claude/                       # Claude Code config, slash commands, persona subagents
 +-- .cursor/rules/                 # Cursor always-on rule
 +-- .github/                       # Copilot instructions, PR template, CI
 +-- docs/                          # Project brief, agent docs, examples
