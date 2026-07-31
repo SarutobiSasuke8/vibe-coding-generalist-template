@@ -2,45 +2,118 @@
 
 Use this file for direction, milestones, and tradeoffs. Keep tactical tasks in `TODO.md`.
 
-## Now
+See `docs/PROJECT_BRIEF.md` for the full product vision.
 
-- Clarify the problem, user, and success criteria.
-- Build the smallest useful working version.
-- Establish install, run, test, and build commands.
-- Keep agent adapters aligned with `AGENTS.md`.
-- Keep `DESIGN.md` aligned with the product's visual direction.
-- Use the first vertical slice workflow before broad feature expansion.
-- Complete the setup checklist after creating a project from the template.
-- Capture important build sessions in `Session Logs/`.
+## Phase 0 - Stabilize the Template (complete, v0.1.0)
 
-## Next
+Goal: make the public repo a trustworthy starting point that a stranger can use without guidance.
 
-- Improve reliability and error handling.
-- Add tests around the first important workflows.
-- Make design tokens consumable by the chosen frontend stack.
-- Prepare a simple deployment or sharing path.
-- Add project-specific agent rules only after repeated patterns prove they are needed.
+- [x] Verify init scripts run cleanly on Windows and Git Bash
+- [x] Confirm drift check behavior in strict and non-strict modes
+- [x] Document strict mode behavior in `docs/SETUP_CHECKLIST.md` and `docs/FAQ.md`
+- [x] Make README quickstart accurate (every command listed runs without error)
+- [x] Finish setup checklist
+- [x] Ensure all adapter docs are intentionally thin (under 80-line cap, no `AGENTS.md` content leakage)
+- [x] Add version/release notes discipline (`VERSION`, `CHANGELOG.md`, `docs/RELEASE_CHECKLIST.md`)
+- [x] Clean `TODO.md` and `ROADMAP.md` so they reflect the template's own state
+
+Acceptance criteria (met):
+- Fresh clone -> init -> `check-agent-docs.sh --strict` passes with no manual intervention.
+- CI runs both drift checks and both init smoke tests on every PR.
+- README quickstart is truthful and the FAQ explains every non-obvious behavior.
+
+## Phase 1 - Polish the Public Template (complete, v0.1.0)
+
+Goal: make the template feel polished enough that adoption doesn't require explanation.
+
+- [x] Add `docs/WHY.md` explaining the philosophy and the problem it solves
+- [x] Add `docs/FAQ.md` consolidating common questions
+- [x] Add minimal / standard / full persona tier modes to the init script (smoke tests cover `full` and `standard`)
+- [x] Ensure the example project brief (`docs/examples/PROJECT_BRIEF.example.md`) is realistic and instructive
+- [x] Add `CHANGELOG.md` with a real `v0.1.0` entry
+- [x] Add template version metadata (`VERSION`) and an init-time fork marker (`.vibe-template-version`) so future CLI upgrade detection works
+- [ ] Tag first real release (`v0.1.0`) -- pending after this branch merges to `main`
+
+Deferred to Phase 1.1 (post-v0.1.0):
+- [ ] Add screenshots or a diagram explaining repo structure
+- [ ] Add a full command reference in the README or docs
+- [ ] Add contribution guide for persona and workflow additions
+- [ ] Add `docs/TEMPLATE_UPGRADE_STRATEGY.md`
+
+Acceptance criteria (met for v0.1.0):
+- A stranger can fork the template, run init, pass the drift check, and understand what to do next in under 15 minutes without author guidance.
+- The repo communicates a real product point of view (`docs/WHY.md`), not just boilerplate.
+
+## Phase 2 - CLI MVP
+
+Goal: automate what the template currently asks humans to do manually.
+
+Core commands: `init`, `check`, `sync`, `doctor`
+
+- [ ] Choose implementation language (TypeScript recommended for iteration speed)
+- [ ] Define config schema (`agentops.config.yml` or `vibe.config.yml`)
+- [ ] Extract template rendering logic into a reusable core
+- [ ] Port drift check into CLI (`vibe check`)
+- [ ] Implement `vibe init` with current script behavior
+- [ ] Implement `vibe sync` to regenerate adapters from canonical contract
+- [ ] Implement `vibe doctor` for repo health reporting
+- [ ] Support Windows, macOS, and Linux
+- [ ] Add JSON output for CI integration
+- [ ] Add dry-run mode
+- [ ] Publish installation instructions
+
+Acceptance criteria:
+- `vibe init` initializes a repo from scratch with no manual steps
+- `vibe check` replaces or wraps existing drift scripts
+- `vibe check --strict` exits nonzero when checks fail
+- CLI has automated tests
+
+## Phase 3 - Upgrade System
+
+Goal: make existing projects maintainable over time as the template evolves.
+
+- [ ] Add template version metadata to generated files
+- [ ] Track which sections are generated vs user-owned
+- [ ] Implement `vibe upgrade --dry-run`
+- [ ] Add migration files between template versions
+- [ ] Add conflict detection for user-edited sections
+
+Acceptance criteria:
+- A project initialized at version N can upgrade to N+1
+- User-authored content is never overwritten silently
+- Conflicts are clearly reported
+
+## Phase 4 - Workflow and Persona Packs
+
+Goal: turn repeated operating patterns into installable modules.
+
+- [ ] Define pack metadata format
+- [ ] Package personas separately from core
+- [ ] Package workflows separately from core
+- [ ] Add `vibe add persona <name>` and `vibe add workflow <name>`
+- [ ] Publish official starter packs
 
 ## Later
 
-- Harden architecture after the useful shape is proven.
-- Add analytics, observability, or usage feedback if relevant.
-- Document operating playbooks for recurring work.
+- Local browser UI (`vibe studio`)
+- Multi-repo scanning and organization dashboard
+- Team governance and PR enforcement
 
 ## Decisions
 
 | Date | Decision | Reason | Revisit When |
 |---|---|---|---|
-| TODO | TODO | TODO | TODO |
+| 2026-05-06 | Keep CLI out of this repo until Phase 2 begins | Template should be stable before adding a build step | When Phase 1 acceptance criteria are met |
+| 2026-05-06 | Stack-agnostic template; no language scaffolding | Keeps the repo forkable by any project type | If a specific stack becomes the clear primary use case |
+| 2026-05-08 | Three persona tiers (`minimal` / `standard` / `full`); `standard` is the new default | `minimal` was too austere for most real projects, `full` overwhelms minimal users | If a fork tells us the tier they reach for never matches the default |
+| 2026-05-08 | `.vibe-template-version` marker written by init, committed by the forker | Future CLI upgrade-detection needs a deterministic anchor before any tooling exists | When the CLI ships and can read it |
 
 ## Risks
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Project goal is vague | Agents may build impressive but irrelevant features | Keep `docs/PROJECT_BRIEF.md` current |
-| Commands are missing | Verification becomes inconsistent | Fill in `AGENTS.md` during setup |
-| Scope expands too quickly | Prototype stalls | Keep `TODO.md` focused on vertical slices |
-| Agent docs drift | Different tools follow different rules | Run `./scripts/check-agent-docs.ps1` and keep adapters thin |
-| Design system drifts | Agents generate inconsistent UI across sessions | Run `agentops design check` and update `DESIGN.md` when UI rules change |
-| Starter placeholders remain too long | Agents lack concrete context and produce generic work | Run strict mode once project setup is complete |
-| Session memory stays in chat | Future agents lose decisions and rationale | Use `Session Logs/` for meaningful sessions |
+| Template becomes generic boilerplate | Low adoption; agents produce unguided work | Keep a strong point of view; include excellent examples |
+| Init scripts break on a platform | Blocks first-time users | Test on Windows, macOS, and Linux before each release |
+| Upgrade system is hard to build safely | Users can't benefit from template improvements | Mark generated sections; use dry-run diffs; prefer additive migrations |
+| Multi-agent tooling changes quickly | Adapters go stale | Keep adapters thin; generate from canonical contract |
+| Scope expands before Phase 0 is done | Template stays unreliable | Finish Phase 0 before starting Phase 1 work |

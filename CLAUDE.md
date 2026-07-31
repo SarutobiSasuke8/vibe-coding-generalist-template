@@ -2,109 +2,36 @@
 
 Canonical source: `AGENTS.md`
 
-Claude must follow `AGENTS.md`. This file is intentionally self-contained so Claude has the operating rules even when only this file is loaded.
+Claude must follow `AGENTS.md`. This file holds Claude-specific guidance only; the principles, operating loop, commands, and handoff standard live in `AGENTS.md`.
 
 ## Alignment Markers
 
-- Think Before Coding
-- Simplicity First
-- Surgical Changes
-- Goal-Driven Execution
-- Vibe Coding Quality Bar
+Claude is bound by all five principles defined in `AGENTS.md`:
 
-## Mission
-
-Help build a useful, reliable, polished, vibe-true project. Move fast, but only as speed to quality. Do not hide uncertainty, invent scope, or create impressive-looking code that fails under ordinary use.
-
-## 1. Think Before Coding
-
-Do not silently assume.
-
-Before implementation:
-
-- State assumptions when they affect architecture, data, UX, privacy, cost, or risk.
-- If multiple interpretations exist, present the options instead of picking silently.
-- Ask the smallest clarifying question when the answer changes the implementation.
-- Push back when a simpler, safer, or more product-aligned path exists.
-- Stop when confused. Name what is unclear before building on it.
-
-## 2. Simplicity First
-
-Use the minimum code that solves the real problem well.
-
-- No speculative features.
-- No abstractions for one use case.
-- No configurability that was not requested.
-- No new dependency unless it clearly reduces risk or complexity.
-- If a 200-line solution could be 50 lines without losing quality, simplify it.
-
-Ask: would a senior engineer call this overbuilt for the current stage?
-
-## 3. Surgical Changes
-
-Every changed line should trace back to the request.
-
-- Do not reformat or refactor adjacent code for taste.
-- Match existing project style.
-- Preserve user-authored comments and docs unless the task requires editing them.
-- Remove imports, variables, and files made obsolete by your own change.
-- Mention unrelated issues separately instead of fixing them silently.
-
-## 4. Goal-Driven Execution
-
-Turn tasks into verifiable outcomes.
-
-- Bug fix: identify or reproduce the failing behavior, then fix it.
-- Feature: define user-visible behavior and acceptance checks.
-- Refactor: preserve behavior before and after.
-- UI change: verify the actual screen when practical.
-- Docs change: verify filenames, links, and instructions.
-
-For multi-step work, use:
-
-```text
-1. Step -> verify: check
-2. Step -> verify: check
-3. Step -> verify: check
-```
-
-## 5. Vibe Coding Quality Bar
-
-The product must feel intentional, cohesive, and reliable.
-
-- Protect the emotional goal in `docs/PROJECT_BRIEF.md`.
-- Use `DESIGN.md` as the visual and interaction contract for frontend work.
-- Use the Design Director persona when `DESIGN.md` needs interpretation or project-specific adaptation.
-- Build the core workflow before adding breadth.
-- Include loading, empty, and error states where they affect the experience.
-- Make copy specific and useful.
-- Treat polish as functional quality, not decoration.
+- **Think Before Coding** — surface assumptions, ask when ambiguity changes implementation, present tradeoffs.
+- **Simplicity First** — minimum code that solves the real problem; no speculative features or abstractions.
+- **Surgical Changes** — every changed line traces to the request; no drive-by refactors.
+- **Goal-Driven Execution** — define success criteria, verify the actual behavior.
+- **Vibe Coding Quality Bar** — protect the product feeling defined in `docs/PROJECT_BRIEF.md`.
 
 ## Required Workflow
 
-For non-trivial work:
-
-1. Read `AGENTS.md`, `docs/PROJECT_BRIEF.md`, and relevant files.
-2. State assumptions and success criteria.
+1. Read `AGENTS.md`, `docs/PROJECT_BRIEF.md`, and the files relevant to the task.
+2. State assumptions and success criteria before non-trivial work.
 3. Make the smallest coherent change.
 4. Run the narrowest meaningful verification.
-5. Handoff with changed files, verification, and residual risk.
-6. Create or append a session log for meaningful multi-file, architectural, debugging, or handoff-heavy sessions.
-
-For trivial changes, keep the process lightweight.
-
-## Agentic Runtime
-
-For semi-autonomous work, use `Agent State/agent-state.md`, `Agent State/task-queue.md`, `Memory/`, `docs/AGENT_EXECUTION_LOOP.md`, `docs/AGENT_TOOL_REGISTRY.md`, and `docs/AGENT_PERMISSION_GATES.md`. Prefer one orchestrator with focused persona checks over broad multi-persona output.
+5. Report change, files, verification, and residual risk.
+6. Append a session log under `Session Logs/` for multi-file, architectural, debugging, or handoff-heavy work, using `Templates/SESSION_LOG_TEMPLATE.md`.
 
 ## Claude-Specific Emphasis
 
-- Be explicit about uncertainty and tradeoffs.
-- Preserve the user's language in product and narrative docs.
-- Keep plans concise, concrete, and testable.
-- Do not turn a focused task into a strategy memo unless the user asks.
-- Use `Templates/SESSION_LOG_TEMPLATE.md` and `Session Logs/` when project memory should persist beyond chat.
-- Run `./scripts/check-agent-behavior.ps1` after changing agent state, memory, permissions, or tool-routing docs.
+- **Plan mode etiquette.** Use plan mode for non-trivial implementations; write the plan to the location prompted, then call `ExitPlanMode`. Do not silently switch from plan to edit.
+- **Hooks and settings.** Project-level Claude Code config lives in `.claude/settings.json`; per-machine overrides go in `.claude/settings.local.json` (gitignored).
+- **Slash commands.** Use `/session-log`, `/drift-check`, and `/handoff` from `.claude/commands/` for the recurring workflows in this repo.
+- **Subagents.** Persona subagents live in `.claude/agents/` — isolated, read-only reviewers. `/council` and `/review` fan out to them; use `code-reviewer` or `qa-acceptance-tester` to verify your own multi-file work. See `docs/SUBAGENTS.md`.
+- **Todos.** For tasks with 3+ steps, drive work via the todo list and keep exactly one item `in_progress`.
+- **Uncertainty.** Be explicit about what was verified vs assumed. Do not paper over confusion with fluent prose.
+- **Drift check.** After editing any agent doc, run `./scripts/check-agent-docs.sh` (macOS/Linux) or `./scripts/check-agent-docs.ps1` (Windows). A `PostToolUse` hook in `.claude/settings.json` also runs it automatically after agent-doc edits; treat hook failures as blocking.
 
 ## Handoff Format
 

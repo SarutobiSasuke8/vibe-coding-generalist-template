@@ -9,25 +9,26 @@ Every model-specific instruction file must stay aligned with this contract:
 - `GEMINI.md`
 - `.github/copilot-instructions.md`
 - `.cursor/rules/vibe-coding-core.mdc`
-- `DESIGN.md`
 
-When this file changes, update the adapters and run:
+When this file changes, update the adapters and run the drift check:
 
-```powershell
-./scripts/check-agent-docs.ps1
+```bash
+./scripts/check-agent-docs.sh     # macOS / Linux / git-bash
+./scripts/check-agent-docs.ps1    # Windows PowerShell
 ```
 
 ## Project Identity
 
 - Project name: `TODO`
 - Project type: `TODO`
+- Primary agent: `TODO`
 - Primary user: `TODO`
 - Current stage: `prototype | active build | maintenance | archived`
 - Product owner persona: `personas/head-of-product-vibe-coding.md`
-- Design system contract: `DESIGN.md`
-- Design owner persona: `personas/design-director-vibe-coding.md`
 - Technical owner persona: `personas/cto-vibe-coding.md`
 - Persona council protocol: `personas/agent-council-protocol.md`
+- Design system contract: `DESIGN.md`
+- Design owner persona: `personas/design-director-vibe-coding.md`
 
 ## Product Goal
 
@@ -56,25 +57,6 @@ For non-trivial work, follow this loop:
 7. Report what changed, what was verified, and what risk remains.
 
 For trivial one-line fixes, use judgment and keep the handoff concise.
-
-## Agentic Runtime Layer
-
-This template supports practical agentic behavior through a single-orchestrator workflow. Treat the personas as callable operating modes unless the user or runtime explicitly provides separate agents.
-
-Use these files when work is more than a one-shot edit:
-
-- `Agent State/agent-state.md` - current goal, active task, blocker, last action, next action, and verification state.
-- `Agent State/task-queue.md` - agent-executable queue with `inbox`, `ready`, `active`, `blocked`, `verify`, and `done` sections.
-- `Memory/project-facts.md` - stable execution facts future agents should not rediscover.
-- `Memory/decisions.md` - append-only decisions that should shape future behavior.
-- `Memory/failures.md` - repeatable failures and the ratchets that prevent them.
-- `Memory/open-questions.md` - questions that materially change implementation, risk, cost, or product direction.
-- `docs/AGENT_EXECUTION_LOOP.md` - plan -> act -> observe -> revise -> verify -> log -> continue/stop.
-- `docs/AGENT_TOOL_REGISTRY.md` - tool safety classes and allowed actions.
-- `docs/AGENT_PERMISSION_GATES.md` - actions that require approval before execution.
-- `QA/AGENT_BEHAVIOR_CHECKS.md` - behavioral checks for agent workflows.
-
-Before autonomous or semi-autonomous work, choose one bounded task, check the tool registry, respect permission gates, and keep state current. Do not simulate multi-agent behavior by producing many persona reports when one orchestrator plus focused specialist checks would be clearer.
 
 ## Core Principles
 
@@ -124,13 +106,30 @@ Turn vague tasks into verifiable outcomes.
 
 Every product decision should support the intended feeling of the project.
 
-- `DESIGN.md` is the durable visual and interaction contract for agents.
-- The Design Director persona interprets `DESIGN.md` against the project brief and should be used for meaningful UX or visual-direction changes.
 - The first meaningful screen or workflow should feel intentional.
 - Core flows need loading, empty, and error states when applicable.
 - UI should be responsive, legible, and hard to break through normal use.
 - Copy should be clear, specific, and free of generic filler.
 - Polish is not decoration; it is part of whether the product works.
+
+## Agentic Runtime Layer
+
+This template supports practical agentic behavior through a single-orchestrator workflow. Treat the personas as callable operating modes unless the user or runtime explicitly provides separate agents.
+
+Use these files when work is more than a one-shot edit:
+
+- `Agent State/agent-state.md` - current goal, active task, blocker, last action, next action, and verification state.
+- `Agent State/task-queue.md` - agent-executable queue with `inbox`, `ready`, `active`, `blocked`, `verify`, and `done` sections.
+- `Memory/project-facts.md` - stable execution facts future agents should not rediscover.
+- `Memory/decisions.md` - append-only decisions that should shape future behavior.
+- `Memory/failures.md` - repeatable failures and the ratchets that prevent them.
+- `Memory/open-questions.md` - questions that materially change implementation, risk, cost, or product direction.
+- `docs/AGENT_EXECUTION_LOOP.md` - plan -> act -> observe -> revise -> verify -> log -> continue/stop.
+- `docs/AGENT_TOOL_REGISTRY.md` - tool safety classes and allowed actions.
+- `docs/AGENT_PERMISSION_GATES.md` - actions that require approval before execution.
+- `QA/AGENT_BEHAVIOR_CHECKS.md` - behavioral checks for agent workflows.
+
+Before autonomous or semi-autonomous work, choose one bounded task, check the tool registry, respect permission gates, and keep state current. Do not simulate multi-agent behavior by producing many persona reports when one orchestrator plus focused specialist checks would be clearer.
 
 ## Commands
 
@@ -149,9 +148,6 @@ TODO
 # Run lint/type checks
 TODO
 
-# Check agent behavior scaffold
-./scripts/check-agent-behavior.ps1
-
 # Build
 TODO
 ```
@@ -164,6 +160,11 @@ TODO
 - Test framework: `TODO`
 - Naming conventions: follow surrounding code unless documented here.
 - Dependency policy: prefer existing dependencies; add new ones only when they clearly reduce risk or complexity.
+
+## Design System
+
+- `DESIGN.md` is the durable visual and interaction contract for agents.
+- The Design Director persona interprets `DESIGN.md` against the project brief and should be used for meaningful UX or visual-direction changes.
 
 ## Verification Policy
 
@@ -198,29 +199,56 @@ Use `QA/TEST_PLAN.md` for planned coverage, `QA/QA_REPORT_TEMPLATE.md` for manua
 - Durable project context lives in `docs/PROJECT_BRIEF.md`.
 - Durable design context lives in `DESIGN.md`.
 - Agent principles live in `docs/AGENT_OPERATING_PRINCIPLES.md`.
-- Agent sync rules live in `docs/AGENT_ALIGNMENT.md`.
 - Quality ratchet rules live in `docs/QUALITY_RATCHET.md`.
-- Session logging rules live in `docs/SESSION_LOGGING.md`.
 - QA planning and regression memory live in `QA/`.
+- Agent sync rules live in `docs/AGENT_ALIGNMENT.md`.
+- Session logging rules live in `docs/SESSION_LOGGING.md`.
 - Upcoming work lives in `TODO.md`.
 - Medium-term direction lives in `ROADMAP.md`.
 - Reusable role prompts live in `personas/`.
 - Session logs live in `Session Logs/` and use `Templates/SESSION_LOG_TEMPLATE.md`.
+- Slash commands live in `.claude/commands/` and are invoked with `/command-name` in Claude Code.
+- Persona subagents for Claude Code live in `.claude/agents/`; usage guidance lives in `docs/SUBAGENTS.md`.
+
+## Slash Commands
+
+These commands are available when working in Claude Code. Invoke them with `/command-name`.
+
+- `/brief` — load and summarize current project context from `AGENTS.md` and `docs/PROJECT_BRIEF.md`.
+- `/spec` — draft a feature spec (goal, scope, acceptance criteria, approach, risks) before writing any code.
+- `/council` — run a persona council review on a task or question using `personas/agent-council-protocol.md`.
+- `/review` — review recent changes through the Code Reviewer and QA Acceptance Tester lenses.
+- `/session-log` — create or append a session log entry in `Session Logs/`.
+- `/drift-check` — run the agent doc alignment check and report the result.
+- `/handoff` — produce a structured handoff note for the current session.
+- `/todo-triage` — sort `TODO.md` into Now / Soon / Parking lot with success criteria and first actions.
+- `/retro` — end-of-session retrospective; surfaces what to codify in `AGENTS.md` and what to add to `TODO.md`.
+
+## Subagents (Claude Code)
+
+Persona subagents live in `.claude/agents/` — one isolated, read-only reviewer per persona. `/council` and `/review` fan work out to them in parallel and synthesize one report. Use a single subagent (`code-reviewer` or `qa-acceptance-tester`) to verify implementation work; reserve multi-persona fan-outs for decisions and audits with multiple risk surfaces. Other tools ignore `.claude/agents/` and use the persona files directly. See `docs/SUBAGENTS.md`.
+
+## Optional Workflow Protocols
+
+These protocols are available for specific situations. They are not the default operating mode.
+
+- **Ralph loop** (`docs/RALPH_LOOP.md`) — autonomous iteration for bounded tasks with a clear definition of done. Use for: fix all tests, implement a fully spec'd feature, migrate a pattern across the repo. Requires a commit checkpoint before starting and a diff review when done.
+- **RIPER** (`docs/RIPER_WORKFLOW.md`) — phase-gated workflow enforcing Research → Innovate → Plan → Execute → Review in sequence. Use when jumping straight into code on a complex task has burned you before. Invoke by telling Claude to follow RIPER for a specific task.
 
 ## Agent Coordination
 
 When multiple agents are involved:
 
-- Avoid editing the same files at the same time.
 - Prefer one orchestrator and bounded specialist workers over broad persona swarms.
 - Assign each worker a clear file scope, goal, and verification responsibility.
+- Avoid editing the same files at the same time.
 - State which files or areas you changed.
 - Do not overwrite another agent's reasoning without cause.
 - Use `TODO.md` for unresolved follow-ups instead of burying them in chat.
 - Use `Agent State/task-queue.md` for agent-executable work that needs status tracking.
 - Update `Memory/decisions.md`, `Memory/failures.md`, or `Memory/project-facts.md` when the session creates durable knowledge.
 - Create or append a session log for meaningful multi-file, architectural, debugging, or handoff-heavy sessions.
-- Run `./scripts/check-agent-docs.ps1` after changing agent instruction files.
+- Run `./scripts/check-agent-docs.sh` (or `./scripts/check-agent-docs.ps1` on Windows) after changing agent instruction files.
 
 When multiple personas are involved, use `personas/agent-council-protocol.md` to route the work, resolve conflicts, and produce one synthesized report instead of separate persona reports.
 

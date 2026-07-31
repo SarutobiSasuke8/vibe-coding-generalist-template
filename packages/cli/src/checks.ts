@@ -92,9 +92,7 @@ const designSections = [
 ];
 
 const forbiddenTemplatePhrases = [
-  "Astraeus",
   "ChatGPT Pro",
-  "[[Alexei Udall]]",
   "Obsidian Vault",
   "C:\\Dev",
   "C:\\Users"

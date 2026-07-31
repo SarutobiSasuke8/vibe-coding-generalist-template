@@ -62,10 +62,11 @@ When changing agent behavior:
 1. Update `AGENTS.md` first.
 2. Update `docs/AGENT_OPERATING_PRINCIPLES.md` if the principle explanation changed.
 3. Update each adapter only with tool-specific emphasis.
-4. Update persona files when role routing, council behavior, or handoff rules change.
-5. Run `./scripts/check-agent-docs.ps1`.
+4. Update persona files when role routing, council behavior, or handoff rules change. Subagent wrappers in `.claude/agents/` load persona files at runtime and rarely need edits; touch them only when a persona is added, renamed, or removed.
+5. Run `./scripts/check-agent-docs.sh` (or `./scripts/check-agent-docs.ps1` on Windows).
 6. Run `./scripts/check-agent-behavior.ps1` when state, memory, tools, permissions, or autonomy rules change.
 7. Update `README.md` if files, setup steps, or template structure changed.
+8. When adding a slash command to `.claude/commands/`, list it in `AGENTS.md` — the drift check enforces this.
 
 ## Adapter Rule
 
@@ -88,16 +89,17 @@ Bad adapter content:
 
 Run:
 
-```powershell
-./scripts/check-agent-docs.ps1
-./scripts/check-agent-behavior.ps1
+```bash
+./scripts/check-agent-docs.sh     # macOS / Linux / git-bash
+./scripts/check-agent-docs.ps1    # Windows PowerShell
 ```
 
-The checks fail if required files, required headings, adapter markers, minimum self-contained adapter content, or the agentic runtime scaffold are missing.
+The check fails if required files, required headings, adapter markers, minimum self-contained adapter content, subagent frontmatter, or the AGENTS.md slash-command listing are missing.
 
 Use strict mode after a new project has replaced starter placeholders:
 
-```powershell
+```bash
+./scripts/check-agent-docs.sh --strict
 ./scripts/check-agent-docs.ps1 -Strict
 ```
 

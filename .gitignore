@@ -16,6 +16,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Local session memory
+# Keep the folder index public, but keep actual session logs out of Git by default.
+Session Logs/*.md
+!Session Logs/_Session Logs Index.md
+
 # Environment
 .env
 .env.*
@@ -27,3 +32,5 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Claude Code per-machine settings (project-level settings.json is checked in)
+.claude/settings.local.json

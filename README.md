@@ -1,185 +1,121 @@
 # Vibe Coding Generalist Template
 
-A reusable starter repo for AI-assisted software projects with aligned agent instructions, vibe coding personas, runtime memory, and drift checks.
+A forkable starter for AI-assisted software projects. Aligns Claude Code, Codex, Cursor, Gemini, and Copilot to one operating contract, ships an 11-persona council that runs as parallel Claude Code subagents, and prevents the most common ways forks ship half-configured.
 
-Template version: `0.1.0`
+Beyond the operating contract, the template ships an agentic runtime layer (`Agent State/`, `Memory/`, `QA/`), a durable design-system contract (`DESIGN.md`), and the `agentops` CLI (`packages/cli`) that validates, operates, and maintains all of it.
 
-Use this as a GitHub template repository when starting a new app, tool, prototype, automation, or experiment where several coding agents may touch the same codebase.
-
-## What This Includes
-
-- `AGENTS.md` - canonical operating contract for all AI coding agents.
-- `DESIGN.md` - durable design-system contract for UI, visual language, interaction states, and responsive behavior.
-- `CLAUDE.md` - Claude adapter aligned to `AGENTS.md`.
-- `CODEX.md` - Codex adapter aligned to `AGENTS.md`.
-- `GEMINI.md` - Gemini adapter aligned to `AGENTS.md`.
-- `.github/copilot-instructions.md` - GitHub Copilot adapter.
-- `.cursor/rules/vibe-coding-core.mdc` - Cursor always-on project rule.
-- `agentops.config.yml` and `VERSION` - template metadata for checks and future upgrades.
-- `TODO.md` - task capture and triage surface.
-- `ROADMAP.md` - milestone and direction tracker.
-- `Agent State/` - active run state and agent-executable task queue.
-- `Memory/` - durable project facts, decisions, failures, and open questions.
-- `personas/` - reusable product, design, engineering, QA, security, ops, delivery, research, data, and growth personas plus the council orchestration protocol.
-- `workflows/` - reusable workflow packs for reviews, handoffs, retros, releases, session logs, and triage.
-- `examples/` - completed example artifacts for users to copy from.
-- `docs/` - product philosophy, setup, adapter strategy, command reference, project brief, quality ratchet, session logging, and agentic runtime rules.
-- `QA/` - test plan, QA report, regression log, and agent behavior checks.
-- `Session Logs/` - append-only records for meaningful build sessions.
-- `Templates/SESSION_LOG_TEMPLATE.md` - reusable session log format.
-- `scripts/check-agent-docs.ps1` - local alignment check.
-- `scripts/check-agent-behavior.ps1` - local agentic scaffold check.
-- `.github/workflows/agent-docs.yml` - CI check for agent doc drift.
-- `.github/pull_request_template.md` and issue templates - lightweight collaboration hygiene.
-- `.env.example`, `CONTRIBUTING.md`, `CHANGELOG.md` - starter repo basics.
-- `LICENSE` - MIT license for reuse.
-
-## First Setup
-
-1. Create a new repo from this template.
-2. Replace placeholder project details in `docs/PROJECT_BRIEF.md`.
-3. Review `DESIGN.md` and adapt tokens/components if the project has a domain-specific visual language.
-4. Update `AGENTS.md` with stack-specific commands and conventions.
-5. Run `./scripts/check-agent-docs.ps1`.
-6. Complete `docs/SETUP_CHECKLIST.md`.
-7. Run `./scripts/check-agent-docs.ps1 -Strict` once placeholders are replaced.
-8. Convert `TODO.md` from starter tasks into the real working queue.
-9. Read `docs/QUALITY_RATCHET.md` and decide the first critical behavior to put under contract.
-10. Keep `ROADMAP.md` high signal: direction, milestones, known tradeoffs.
-11. Read `docs/AGENT_EXECUTION_LOOP.md`, then define the first safe agent task in `Agent State/task-queue.md`.
-12. Run `./scripts/check-agent-behavior.ps1` before relying on autonomous or semi-autonomous workflows.
-
-## Claude Code Skill Pack
-
-The template ships a set of Claude Code slash commands in `.claude/commands/`. These work automatically in any project created from this template when opened with Claude Code.
-
-| Command | Purpose |
-|---|---|
-| `/council` | Full multi-persona council review orchestrated by the Conductor |
-| `/product` | Head of Product - vibe check, scope, quality gates |
-| `/cto` | CTO - architecture, technical tradeoffs, implementation plan |
-| `/qa` | QA Acceptance Tester - acceptance criteria, ship-readiness |
-| `/security` | AEGIS - security, privacy, prompt injection, secrets |
-| `/code-review` | Code Reviewer - correctness, coupling, regression risk |
-| `/research` | Research Scout - assumptions, options, unknowns, source quality |
-
-All commands accept a task description as an argument, for example `/council review the auth flow before launch`. They read `docs/PROJECT_BRIEF.md` and `AGENTS.md` for project context automatically.
-
-For Cursor, Codex, Gemini, and Copilot, use the persona docs in `personas/` directly as prompts.
-
-## Persona Council
-
-For multi-agent or multi-perspective work, use `/council` in Claude Code or `personas/agent-council-protocol.md` in other tools.
-
-The council routes work through Product, Design, CTO, Code Review, QA, Security, Ops, Delivery, Research, Data, and Growth - producing one synthesized report, not eleven disconnected ones. See `docs/PERSONA_COUNCIL.md` for the full overview.
-
-## Agent System
-
-This template uses a canonical-contract pattern:
-
-```text
-AGENTS.md
-  -> DESIGN.md
-  -> CLAUDE.md
-  -> CODEX.md
-  -> GEMINI.md
-  -> .github/copilot-instructions.md
-  -> .cursor/rules/vibe-coding-core.mdc
-```
-
-`AGENTS.md` owns the shared build rules. `DESIGN.md` owns the shared visual and interaction contract. The other files are adapters for specific tools. When agent behavior changes, update `AGENTS.md` first, then update the adapters and run the alignment check. When visual language, component behavior, or responsive UX changes, update `DESIGN.md`.
-
-## Planned CLI
-
-The template is designed to become a CLI-backed product. The first commands are intentionally conservative:
+## Quickstart
 
 ```bash
-agentops check
-agentops status
-agentops next
-agentops start
-agentops complete
-agentops block
-agentops maintenance
-agentops init
-agentops sync
-agentops doctor
+# 1. Create a new repo from this template (GitHub "Use this template").
+# 2. Clone it, then run:
+./scripts/init.sh        # macOS / Linux / git-bash on Windows
+./scripts/init.ps1       # Windows PowerShell
 ```
 
-Current CLI status:
+The init script prompts for project name, vibe, install/run/test/lint/build commands, primary agent, and personas tier (`minimal` / `standard` / `full`) -- then fills placeholders, demotes the personas the chosen tier doesn't keep, and runs the drift check. Re-run anytime with `--force` (or `-Force`).
 
-- `agentops check` validates the repo agent operating layer.
-- `agentops design check` validates `DESIGN.md`.
-- `agentops design tokens` exports CSS variables from `DESIGN.md`.
-- `agentops health` shows a single readiness dashboard across docs, runtime, commands, and design.
-- `agentops doctor` reports current agentic readiness and next action from `Agent State/`.
-- `agentops status`, `next`, `start`, `complete`, and `block` operate the markdown task queue.
-- `agentops maintenance` runs the first read-only autonomous maintenance check.
-- `.github/workflows/agent-maintenance.yml` schedules the read-only maintenance check weekly, supports manual runs, and uploads a JSON report artifact.
-- `agentops init` fills the main template placeholders for a real project.
-- `agentops init --mode <lite|standard|full-agentic>` records the intended operating weight for the repo.
-- `agentops sync` is still scaffolded.
+Prefer the manual path? Follow [`docs/SETUP_CHECKLIST.md`](docs/SETUP_CHECKLIST.md).
 
-The current source of truth remains the Markdown template plus PowerShell checks. CLI commands should call shared validation logic rather than replacing the file-based contract with hidden state.
+## What you get
 
-## Suggested Repo Shape
+- **One operating contract** -- `AGENTS.md` is canonical; `CLAUDE.md` / `CODEX.md` / `GEMINI.md` / `.github/copilot-instructions.md` / `.cursor/rules/vibe-coding-core.mdc` are thin tool-specific adapters that point at it.
+- **Persona council** -- 11 reusable role prompts (Product, CTO, QA + 8 optional) and an orchestration protocol so multi-perspective work produces one synthesized report instead of eleven.
+- **Persona subagents** -- every persona ships as a Claude Code subagent in `.claude/agents/`: isolated, read-only reviewers that `/council` and `/review` fan out to in parallel. See [`docs/SUBAGENTS.md`](docs/SUBAGENTS.md) for when (and when not) to use them.
+- **Self-enforcing drift check** -- a `PostToolUse` hook in `.claude/settings.json` runs the drift check automatically whenever Claude Code edits an agent instruction file, so alignment does not depend on anyone remembering to run a script.
+- **Project context** -- `docs/PROJECT_BRIEF.md` for the durable "what is this for" doc; see [`docs/examples/PROJECT_BRIEF.example.md`](docs/examples/PROJECT_BRIEF.example.md) for what filled-in looks like.
+- **Product philosophy** -- [`docs/WHY.md`](docs/WHY.md) explains why the template exists and what problem it solves.
+- **Release spine** -- `VERSION`, [`CHANGELOG.md`](CHANGELOG.md), and [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) define the path to a trustworthy public template release.
+- **Session memory** -- append-only `Session Logs/` with a template, index, and clear "when to log" rule.
+- **Drift check** -- `scripts/check-agent-docs.ps1` and `.sh` enforce that adapters stay slim, required headings exist, and (in `--strict` / `-Strict` mode) placeholders are replaced. CI runs the standard check on every PR; run strict locally after init in your fork. See [`docs/FAQ.md`](docs/FAQ.md#drift-check-and-strict-mode) for the full rule list.
+- **Claude Code scaffolding** -- `.claude/settings.json` with read-only Bash defaults and the drift-check hook, plus slash commands `/brief`, `/spec`, `/council`, `/review`, `/session-log`, `/drift-check`, `/handoff`, `/todo-triage`, `/retro`.
+- **PR template** -- matches the AGENTS.md handoff format (Change / Files / Verification / Risks / Session log).
+- **Design system contract** -- `DESIGN.md` owns visual language, interaction states, and responsive behavior; `agentops design check` validates it and `agentops design tokens` exports CSS variables.
+- **Agentic runtime layer** -- `Agent State/` (run state + task queue), `Memory/` (facts, decisions, failures, open questions), `QA/` (test plan, QA reports, regression log, behavior checks), and the execution-loop / tool-registry / permission-gate docs that make semi-autonomous work bounded and resumable.
+- **agentops CLI** -- `agentops check | design | health | doctor | status | next | start | complete | block | maintenance | init` operate the markdown scaffold without hidden state. `.github/workflows/agent-maintenance.yml` schedules the read-only maintenance check weekly.
+- **Workflow packs** -- `workflows/` covers first vertical slice, reviews, security review, handoffs, retros, release prep, session logs, and TODO triage.
+- **Quality ratchet** -- `docs/QUALITY_RATCHET.md`: every behavior change should leave a durable signal (test, smoke check, eval, or documented decision).
+
+## Conventions in 60 seconds
+
+- Read `AGENTS.md` first. It owns the principles, operating loop, and handoff standard.
+- Edit `AGENTS.md` to change agent behavior; adapters only carry tool-specific guidance and stay under 80 lines (drift check enforces this).
+- Project context lives in `docs/PROJECT_BRIEF.md`. Read the example before writing your own.
+- The public philosophy lives in `docs/WHY.md`; the future CLI split is tracked in `docs/CLI_ROADMAP.md`.
+- Release readiness lives in `VERSION`, `CHANGELOG.md`, and `docs/RELEASE_CHECKLIST.md`.
+- Multi-persona reviews use `personas/agent-council-protocol.md`.
+- Meaningful sessions get a log under `Session Logs/`. See `docs/SESSION_LOGGING.md`.
+
+## Slash commands, subagents, and skills
+
+**Slash commands** are repo-local `.md` files in `.claude/commands/`. They run in Claude Code exactly as written and are checked into the repo, so every fork gets them automatically.
+
+**Subagents** are repo-local `.md` files in `.claude/agents/`: separate agent instances with their own system prompt, context window, and tool restrictions. This template ships one per persona, all read-only. `/council` and `/review` fan out to them in parallel; Claude can also delegate to them on its own based on their descriptions. [`docs/SUBAGENTS.md`](docs/SUBAGENTS.md) covers the how/when/why.
+
+**Skills** are reusable instruction packages (`SKILL.md` files from plugins, user config, or the Claude Code distribution) that Claude loads on demand. They appear in the available-skills list in Claude Code's context. Repo-local slash commands are the safer bet for "every fork should have this."
+
+Commands in this template:
+
+| Command | What it does |
+|---|---|
+| `/brief` | Summarize current project state from `AGENTS.md` and `docs/PROJECT_BRIEF.md` |
+| `/spec` | Draft a feature spec before writing any code |
+| `/council` | Run a persona council review on a task |
+| `/review` | Review recent changes through Code Reviewer and QA lenses |
+| `/session-log` | Create or append a session log entry |
+| `/drift-check` | Run the agent doc alignment check |
+| `/handoff` | Produce a structured handoff note for the current session |
+| `/todo-triage` | Sort `TODO.md` items into Now / Soon / Parking lot with success criteria |
+| `/retro` | End-of-session retrospective: what worked, what to codify in `AGENTS.md` |
+
+Add new commands by dropping a `.md` file in `.claude/commands/`. Keep commands focused: one workflow, one output format. The `/brief` and `/handoff` commands are good models.
+
+## FAQ
+
+For the full FAQ see [`docs/FAQ.md`](docs/FAQ.md). The short version:
+
+**Do I need all four agent adapters?** Keep them. They're thin (~30-40 lines each) and forks of this template are friendlier to other contributors when the tools they prefer are pre-configured.
+
+**Do I need all 11 personas?** No. The init prompt offers three tiers: `minimal` (Product, CTO, QA -- 3), `standard` (adds Code Reviewer, Design, Delivery -- 6), and `full` (all 11). Personas not kept move to `personas/optional/`. Promote any optional persona back when its concerns become recurring.
+
+**What if I only use Claude Code?** Same answer as the agents question: leave the others. They cost ~150 lines total and your collaborators may use them.
+
+**Stack-agnostic?** Yes. The template intentionally has no language or framework code. Add your stack after init; rename `quality.yml.example` to `quality.yml` in `.github/workflows/` when you have lint/test/build to wire up.
+
+## Repo shape
 
 ```text
 .
-+-- .claude/
-|   `-- commands/
-+-- .github/
-|   +-- copilot-instructions.md
-|   +-- ISSUE_TEMPLATE/
-|   `-- workflows/
-+-- .cursor/
-|   `-- rules/
-+-- Agent State/
-|   +-- agent-state.md
-|   `-- task-queue.md
-+-- Memory/
-|   +-- decisions.md
-|   +-- failures.md
-|   +-- open-questions.md
-|   `-- project-facts.md
-+-- QA/
-+-- Templates/
-+-- docs/
-+-- examples/
-+-- personas/
-+-- scripts/
-+-- Session Logs/
-+-- workflows/
-+-- agentops.config.yml
-+-- AGENTS.md
-+-- CHANGELOG.md
-+-- CLAUDE.md
-+-- CODEX.md
-+-- CONTRIBUTING.md
-+-- DESIGN.md
-+-- GEMINI.md
-+-- LICENSE
-+-- README.md
-+-- ROADMAP.md
-+-- TODO.md
-`-- VERSION
++-- .claude/                       # Claude Code config, slash commands, persona subagents
++-- .cursor/rules/                 # Cursor always-on rule
++-- .github/                       # Copilot instructions, PR template, CI
++-- Agent State/                   # Active run state + agent-executable task queue
++-- Memory/                        # Durable facts, decisions, failures, open questions
++-- QA/                            # Test plan, QA reports, regression log, behavior checks
++-- docs/                          # Project brief, agent docs, examples
++-- examples/                      # Completed example artifacts (session log, reference UI)
++-- packages/cli/                  # agentops CLI (TypeScript)
++-- personas/                      # Core + optional role prompts
++-- scripts/                       # init + drift check (ps1 + sh) + behavior check
++-- Session Logs/                  # Append-only session memory
++-- Templates/                     # Session log + project ignition templates
++-- workflows/                     # Reusable workflow packs
++-- AGENTS.md                      # Canonical agent contract
++-- DESIGN.md                      # Durable design-system contract
++-- agentops.config.yml            # Template metadata for checks and upgrades
++-- VERSION                        # Template release version
++-- CLAUDE.md / CODEX.md / GEMINI.md
+`-- README.md / ROADMAP.md / TODO.md / CHANGELOG.md / LICENSE
 ```
 
-## Operating Rhythm
+## Operating rhythm
 
-- Keep the project brief current enough that a new agent can become useful fast.
+- Keep `docs/PROJECT_BRIEF.md` current enough that a new agent becomes useful fast.
 - Keep `DESIGN.md` current enough that a new agent can produce coherent UI without rediscovering the visual system.
-- Use `docs/TEMPLATE_MODES.md` to choose lite, standard, or full-agentic operating weight.
-- Use `workflows/first-vertical-slice.md` before broad implementation.
 - Put temporary work in `TODO.md`; promote durable direction into `ROADMAP.md`.
-- Update `AGENTS.md` when repeated mistakes or repo-specific conventions appear.
-- Use `personas/agent-council-protocol.md` for multi-persona audits, plans, reviews, and implementation handoffs.
-- Use `Agent State/` and `Memory/` for agentic work that needs resumable state.
-- Use `docs/AGENT_TOOL_REGISTRY.md` and `docs/AGENT_PERMISSION_GATES.md` before tool-heavy or risky automation.
+- Update `AGENTS.md` when repeated mistakes or repo-specific conventions appear; re-run drift check.
+- Use the persona council for audits, plans, reviews, or implementation handoffs.
+- Use `Agent State/` and `Memory/` for agentic work that needs resumable state; run `./scripts/check-agent-behavior.ps1` after changing the runtime scaffold.
+- Use `docs/TEMPLATE_MODES.md` to choose lite, standard, or full-agentic operating weight, and `agentops health` for a single readiness dashboard.
 - Capture meaningful multi-file or decision-heavy sessions in `Session Logs/`.
-- Use `docs/QUALITY_RATCHET.md` when behavior changes: tests, evals, smoke checks, or documented risk should accumulate.
-- Run `./scripts/check-agent-behavior.ps1` after changing the agentic runtime scaffold.
-- Record recurring bugs and edge cases in `QA/REGRESSION_LOG.md`.
-- Run `./scripts/check-agent-docs.ps1` after changing agent instructions.
-- Use `./scripts/check-agent-docs.ps1 -Strict` after the template placeholders are replaced.
-- Prefer small, verifiable changes over sprawling rewrites.
+- After replacing template placeholders, run `./scripts/check-agent-docs.sh --strict`.

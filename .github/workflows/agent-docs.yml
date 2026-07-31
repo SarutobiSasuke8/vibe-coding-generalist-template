@@ -13,22 +13,24 @@ on:
       - "CONTRIBUTING.md"
       - "CHANGELOG.md"
       - "LICENSE"
+      - "VERSION"
       - ".env.example"
       - ".github/copilot-instructions.md"
       - ".github/workflows/agent-docs.yml"
       - ".cursor/rules/**"
+      - ".claude/**"
+      - "docs/**"
+      - "personas/**"
+      - "Session Logs/**"
+      - "Templates/**"
+      - "scripts/**"
       - "Agent State/**"
       - "Memory/**"
       - "QA/**"
-      - "Templates/**"
-      - "docs/**"
-      - "examples/**"
-      - "personas/**"
-      - "scripts/**"
-      - "Session Logs/**"
       - "workflows/**"
+      - "examples/**"
+      - "DESIGN.md"
       - "agentops.config.yml"
-      - "VERSION"
       - "package.json"
       - "package-lock.json"
       - "tsconfig.base.json"
@@ -47,49 +49,77 @@ on:
       - "CONTRIBUTING.md"
       - "CHANGELOG.md"
       - "LICENSE"
+      - "VERSION"
       - ".env.example"
       - ".github/copilot-instructions.md"
       - ".github/workflows/agent-docs.yml"
       - ".cursor/rules/**"
+      - ".claude/**"
+      - "docs/**"
+      - "personas/**"
+      - "Session Logs/**"
+      - "Templates/**"
+      - "scripts/**"
       - "Agent State/**"
       - "Memory/**"
       - "QA/**"
-      - "Templates/**"
-      - "docs/**"
-      - "examples/**"
-      - "personas/**"
-      - "scripts/**"
-      - "Session Logs/**"
       - "workflows/**"
+      - "examples/**"
+      - "DESIGN.md"
       - "agentops.config.yml"
-      - "VERSION"
       - "package.json"
       - "package-lock.json"
       - "tsconfig.base.json"
       - "packages/**"
 
 jobs:
-  check-agent-docs:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+  check-agent-docs-pwsh:
+    name: Drift check (pwsh, windows-latest)
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check agent doc alignment
+      - name: Run PowerShell drift check
         shell: pwsh
-        run: ./scripts/check-agent-docs.ps1 -Json
-      - name: Check agent behavior scaffold
+        run: ./scripts/check-agent-docs.ps1
+
+  check-agent-docs-bash:
+    name: Drift check (bash, ubuntu-latest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run bash drift check
+        run: |
+          chmod +x ./scripts/check-agent-docs.sh
+          ./scripts/check-agent-docs.sh
+
+  test-init-pwsh:
+    name: Init smoke test (pwsh, windows-latest)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run PowerShell init smoke test
         shell: pwsh
-        run: ./scripts/check-agent-behavior.ps1
+        run: ./scripts/test-init.ps1
+
+  test-init-bash:
+    name: Init smoke test (bash, ubuntu-latest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run bash init smoke test
+        run: |
+          chmod +x ./scripts/test-init.sh
+          ./scripts/test-init.sh
+
+  test-cli:
+    name: agentops CLI tests (ubuntu-latest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: npm
+          node-version: 20
       - name: Install dependencies
         run: npm ci
-      - name: Build CLI
-        run: npm run build
-      - name: Test CLI
+      - name: Run CLI tests
         run: npm test

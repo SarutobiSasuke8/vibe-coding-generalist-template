@@ -21,17 +21,19 @@ In council mode, this protocol overrides any individual persona instruction that
 
 ## Default Council Roles
 
-- [Research Scout](research-scout.md) validates assumptions, source quality, options, currentness, and unknowns.
-- [Head of Product](head-of-product-vibe-coding.md) defines user value, scope, priorities, and product fit.
-- [Design Director](design-director-vibe-coding.md) defines experience clarity, UX risks, visual coherence, accessibility, and user-facing polish.
-- [CTO](cto-vibe-coding.md) defines architecture, implementation strategy, technical tradeoffs, and maintainability direction.
-- [Code Reviewer](code-reviewer-maintainability.md) challenges correctness, hidden coupling, testability, and regression risk.
-- [QA Acceptance Tester](qa-acceptance-tester.md) turns promises into acceptance criteria and ship-readiness checks.
-- [AEGIS Defensive Security](aegis-defensive-security.md) reviews security, privacy, prompt-injection risk, secrets, unsafe automation, and local-system exposure.
-- [Ops Deployment Engineer](ops-deployment-engineer.md) reviews deployment, environment hygiene, observability, rollback, and production readiness.
-- [Data Analytics Lead](data-analytics-lead.md) defines success metrics, lightweight instrumentation, privacy boundaries, and review cadence.
-- [Growth Launch Strategist](growth-launch-strategist.md) reviews positioning, launch assets, distribution fit, credible claims, and feedback loops.
-- [Delivery Lead](delivery-lead.md) converts the synthesis into milestones, decisions, dependencies, and next actions.
+Persona files live in `personas/`; init may move optional personas to `personas/optional/`. Resolve either location before declaring a persona missing.
+
+- **Research Scout** (`research-scout.md`) validates assumptions, source quality, options, currentness, and unknowns.
+- **Head of Product** (`head-of-product-vibe-coding.md`) defines user value, scope, priorities, and product fit.
+- **Design Director** (`design-director-vibe-coding.md`) defines experience clarity, UX risks, visual coherence, accessibility, and user-facing polish.
+- **CTO** (`cto-vibe-coding.md`) defines architecture, implementation strategy, technical tradeoffs, and maintainability direction.
+- **Code Reviewer** (`code-reviewer-maintainability.md`) challenges correctness, hidden coupling, testability, and regression risk.
+- **QA Acceptance Tester** (`qa-acceptance-tester.md`) turns promises into acceptance criteria and ship-readiness checks.
+- **AEGIS Defensive Security** (`aegis-defensive-security.md`) reviews security, privacy, prompt-injection risk, secrets, unsafe automation, and local-system exposure.
+- **Ops Deployment Engineer** (`ops-deployment-engineer.md`) reviews deployment, environment hygiene, observability, rollback, and production readiness.
+- **Data Analytics Lead** (`data-analytics-lead.md`) defines success metrics, lightweight instrumentation, privacy boundaries, and review cadence.
+- **Growth Launch Strategist** (`growth-launch-strategist.md`) reviews positioning, launch assets, distribution fit, credible claims, and feedback loops.
+- **Delivery Lead** (`delivery-lead.md`) converts the synthesis into milestones, decisions, dependencies, and next actions.
 
 ## Routing
 
@@ -65,6 +67,23 @@ Default full-council order:
 13. Conductor synthesis
 
 For implementation work, Delivery Lead may produce the final execution plan after Product, Design, CTO, QA, AEGIS, and Ops have contributed.
+
+## Execution Modes
+
+**Parallel subagents (Claude Code).** Each persona has a subagent wrapper in `.claude/agents/` (mapping table in `docs/SUBAGENTS.md`). The conductor launches the selected personas as parallel subagents, prompting each with the mission, the files or diff in scope, and the compact persona report format below. Subagents are isolated: they cannot see the conversation, so every prompt must be self-contained. The sequence above becomes a synthesis order, not an execution order — independent personas run simultaneously; only Delivery Lead (which consumes the others' output) runs after them.
+
+**Sequential in-context (all other tools).** Apply the persona files one at a time in the order above, using each persona's section as an internal checklist, then synthesize.
+
+In both modes the user sees one council report, never a stack of persona reports.
+
+### Compact Persona Report Format
+
+When contributing to a council run, each persona returns:
+
+- **Persona** and one-line verdict with confidence.
+- **Top findings** (3-5, ordered by severity or decision weight, with evidence).
+- **Risks or constraints** other personas must respect.
+- **Recommendation** (do / defer / reject, with the smallest credible path).
 
 ## Mission Intake
 
@@ -147,12 +166,3 @@ For code-review-style work, findings should still lead when the user asks for a 
 - Do not let Growth override Product truth or security constraints.
 - Do not let CTO speed override QA, AEGIS, or `AGENTS.md`.
 - Do not create tasks, docs, or automation changes without checking the repo's current conventions.
-
-## Output Format
-
-- Decision or recommendation.
-- Persona inputs that materially changed the decision.
-- Conflicts resolved.
-- Action plan.
-- Verification or approval requirements.
-- Open questions.

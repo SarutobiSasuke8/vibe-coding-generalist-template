@@ -11,10 +11,9 @@ Useful options:
 ```powershell
 ./scripts/check-agent-docs.ps1
 ./scripts/check-agent-docs.ps1 -Strict
-./scripts/check-agent-docs.ps1 -Json
 ```
 
-The check covers required files, canonical headings, adapter markers, adapter safety phrases, private template leaks, workflow metadata, config metadata, and selected broken Markdown links.
+The check covers required files, required headings, adapter markers, adapter line caps, subagent frontmatter, and the AGENTS.md slash-command listing. A bash twin (`./scripts/check-agent-docs.sh`) behaves identically. Richer structural validation (design contract, runtime scaffold, private template leaks) lives in `agentops check`.
 
 ### `./scripts/check-agent-behavior.ps1`
 

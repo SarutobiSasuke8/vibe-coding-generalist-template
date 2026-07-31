@@ -23,24 +23,20 @@ Small one-line fixes do not need a session log unless the user asks.
 
 ## Logs
 
-- [Maintenance Report Artifact](2026-05-18-session-log-maintenance-report-artifact.md)
-- [Agentops Init](2026-05-18-session-log-agentops-init.md)
-- [Agent Maintenance Scheduler](2026-05-18-session-log-agent-maintenance-scheduler.md)
-- [Agentops Maintenance](2026-05-18-session-log-agentops-maintenance.md)
-- [Agent Task CLI](2026-05-18-session-log-agent-task-cli.md)
-- [Agentops Doctor CLI](2026-05-16-session-log-agentops-doctor-cli.md)
-- [Agentic Runtime Scaffold](2026-05-16-session-log-agentic-runtime-scaffold.md)
-- [Sample - Template Setup](2026-05-03-session-log-vibe-coding-template-optimization.md)
+Add one row per session log, newest first. If this project commits its session logs, use markdown links (the drift check validates that linked files exist); if logs are local-only (the default), use plain filenames, since the linked files will not exist in CI or fresh clones.
+
+| Date | File | Summary |
+|---|---|---|
+| 2026-06-09 | 2026-06-09-session-log-template-review-v0.2.0.md | Full template review → v0.2.0: persona subagents, PostToolUse drift-check hook, fork-ready init, session-log mode, approval-fatigue fix |
+| 2026-05-18 | 2026-05-18-session-log-maintenance-report-artifact.md | Maintenance reports written as JSON artifacts for scheduled review |
+| 2026-05-18 | 2026-05-18-session-log-agentops-init.md | agentops init fills the main project context files |
+| 2026-05-18 | 2026-05-18-session-log-agent-maintenance-scheduler.md | GitHub Actions schedules the read-only maintenance check |
+| 2026-05-18 | 2026-05-18-session-log-agentops-maintenance.md | First read-only autonomous maintenance check |
+| 2026-05-18 | 2026-05-18-session-log-agent-task-cli.md | Stable task IDs and queue movement commands for the orchestrator loop |
+| 2026-05-16 | 2026-05-16-session-log-agentops-doctor-cli.md | Read-only doctor command bridging scaffold to operation |
+| 2026-05-16 | 2026-05-16-session-log-agentic-runtime-scaffold.md | Agent State, Memory, QA, and execution-loop scaffold |
+| 2026-05-03 | 2026-05-03-session-log-vibe-coding-template-optimization.md | Template optimization baseline session |
 
 ## Current Themes
 
-- Strong agent contracts need both a canonical source and self-contained adapters.
-- Practical agentic behavior needs state, memory, tool permissions, verification, and stop conditions.
-- A read-only doctor command is a useful first bridge from scaffold to single-orchestrator operation.
-- Stable task IDs plus queue movement commands make the single-orchestrator loop operable before scheduling.
-- Read-only maintenance is the first routine that can safely be scheduled or run unattended.
-- GitHub Actions provides the first safe scheduler for read-only maintenance.
-- `agentops init` reduces first-use friction by filling the main project context files.
-- Maintenance reports can be written as JSON artifacts for scheduled review.
-- Session logs preserve decisions, rationale, verification, and handoff context.
-- Strict validation should fail until a newly generated project replaces setup placeholders.
+Update this section as durable themes emerge from the logs. Keep entries non-sensitive: this index is committed even when the logs themselves are not.
