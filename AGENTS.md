@@ -9,6 +9,7 @@ Every model-specific instruction file must stay aligned with this contract:
 - `GEMINI.md`
 - `.github/copilot-instructions.md`
 - `.cursor/rules/vibe-coding-core.mdc`
+- `DESIGN.md`
 
 When this file changes, update the adapters and run:
 
@@ -23,6 +24,8 @@ When this file changes, update the adapters and run:
 - Primary user: `TODO`
 - Current stage: `prototype | active build | maintenance | archived`
 - Product owner persona: `personas/head-of-product-vibe-coding.md`
+- Design system contract: `DESIGN.md`
+- Design owner persona: `personas/design-director-vibe-coding.md`
 - Technical owner persona: `personas/cto-vibe-coding.md`
 - Persona council protocol: `personas/agent-council-protocol.md`
 
@@ -121,6 +124,8 @@ Turn vague tasks into verifiable outcomes.
 
 Every product decision should support the intended feeling of the project.
 
+- `DESIGN.md` is the durable visual and interaction contract for agents.
+- The Design Director persona interprets `DESIGN.md` against the project brief and should be used for meaningful UX or visual-direction changes.
 - The first meaningful screen or workflow should feel intentional.
 - Core flows need loading, empty, and error states when applicable.
 - UI should be responsive, legible, and hard to break through normal use.
@@ -191,6 +196,7 @@ Use `QA/TEST_PLAN.md` for planned coverage, `QA/QA_REPORT_TEMPLATE.md` for manua
 ## Documentation Rules
 
 - Durable project context lives in `docs/PROJECT_BRIEF.md`.
+- Durable design context lives in `DESIGN.md`.
 - Agent principles live in `docs/AGENT_OPERATING_PRINCIPLES.md`.
 - Agent sync rules live in `docs/AGENT_ALIGNMENT.md`.
 - Quality ratchet rules live in `docs/QUALITY_RATCHET.md`.

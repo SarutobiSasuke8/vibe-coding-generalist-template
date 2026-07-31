@@ -45,6 +45,7 @@ function Test-RepoDirectory {
 
 $requiredFiles = @(
     "AGENTS.md",
+    "DESIGN.md",
     "CLAUDE.md",
     "CODEX.md",
     "GEMINI.md",
@@ -67,6 +68,8 @@ $requiredFiles = @(
     "docs/SETUP_CHECKLIST.md",
     "docs/SESSION_LOGGING.md",
     "docs/TEMPLATE_UPGRADE_STRATEGY.md",
+    "docs/TEMPLATE_HEALTH.md",
+    "docs/TEMPLATE_MODES.md",
     "docs/WHY.md",
     "examples/PROJECT_BRIEF.example.md",
     "examples/SESSION_LOG.example.md",
@@ -99,6 +102,7 @@ $requiredFiles = @(
     "personas/qa-acceptance-tester.md",
     "personas/research-scout.md",
     "workflows/README.md",
+    "workflows/first-vertical-slice.md",
     "workflows/handoff.md",
     "workflows/release-prep.md",
     "workflows/retro.md",
@@ -164,6 +168,18 @@ $projectBriefHeadings = @(
     "## Quality Gates",
     "## Technical Notes",
     "## Open Questions"
+)
+
+$designMarkers = @(
+    "colors:",
+    "typography:",
+    "components:",
+    "## Overview",
+    "## How Agents Should Use This File",
+    "## Components",
+    "## Responsive Behavior",
+    "## Agent Prompt Guide",
+    "personas/design-director-vibe-coding.md"
 )
 
 $forbiddenAdapterPhrases = @(
@@ -238,6 +254,15 @@ if ($null -ne $briefContent) {
     foreach ($heading in $projectBriefHeadings) {
         if ($briefContent -notmatch [regex]::Escape($heading)) {
             Add-Error "docs/PROJECT_BRIEF.md missing required heading: $heading"
+        }
+    }
+}
+
+$designContent = Get-RepoContent "DESIGN.md"
+if ($null -ne $designContent) {
+    foreach ($marker in $designMarkers) {
+        if ($designContent -notmatch [regex]::Escape($marker)) {
+            Add-Error "DESIGN.md missing marker: $marker"
         }
     }
 }

@@ -51,6 +51,8 @@ Implement useful, reliable, polished changes with minimal blast radius. Move fro
 ## 5. Vibe Coding Quality Bar
 
 - Protect the product feeling described in `docs/PROJECT_BRIEF.md`.
+- Read and preserve `DESIGN.md` for frontend, UX, visual, component, and interaction work.
+- Treat the Design Director persona as the judgement layer for adapting `DESIGN.md` to the project brief.
 - For frontend work, check responsive layout, interaction states, and real rendering when practical.
 - Favor complete core flows over scattered feature fragments.
 - Treat loading, empty, and error states as part of the feature.

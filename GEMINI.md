@@ -48,6 +48,8 @@ Use Gemini for clear technical analysis, grounded implementation planning, resea
 ## 5. Vibe Coding Quality Bar
 
 - Protect the intended emotional tone and user experience.
+- Ground UI recommendations in `DESIGN.md` and `docs/PROJECT_BRIEF.md`.
+- Use the Design Director persona as the review lens when visual direction, UX quality, or design-system adaptation is material.
 - Favor coherent core workflows over feature sprawl.
 - Include usability, accessibility, and failure states in recommendations.
 - Keep copy and product language specific, not generic.

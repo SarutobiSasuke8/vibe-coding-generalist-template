@@ -9,6 +9,7 @@ Use this as a GitHub template repository when starting a new app, tool, prototyp
 ## What This Includes
 
 - `AGENTS.md` - canonical operating contract for all AI coding agents.
+- `DESIGN.md` - durable design-system contract for UI, visual language, interaction states, and responsive behavior.
 - `CLAUDE.md` - Claude adapter aligned to `AGENTS.md`.
 - `CODEX.md` - Codex adapter aligned to `AGENTS.md`.
 - `GEMINI.md` - Gemini adapter aligned to `AGENTS.md`.
@@ -37,15 +38,16 @@ Use this as a GitHub template repository when starting a new app, tool, prototyp
 
 1. Create a new repo from this template.
 2. Replace placeholder project details in `docs/PROJECT_BRIEF.md`.
-3. Update `AGENTS.md` with stack-specific commands and conventions.
-4. Run `./scripts/check-agent-docs.ps1`.
-5. Complete `docs/SETUP_CHECKLIST.md`.
-6. Run `./scripts/check-agent-docs.ps1 -Strict` once placeholders are replaced.
-7. Convert `TODO.md` from starter tasks into the real working queue.
-8. Read `docs/QUALITY_RATCHET.md` and decide the first critical behavior to put under contract.
-9. Keep `ROADMAP.md` high signal: direction, milestones, known tradeoffs.
-10. Read `docs/AGENT_EXECUTION_LOOP.md`, then define the first safe agent task in `Agent State/task-queue.md`.
-11. Run `./scripts/check-agent-behavior.ps1` before relying on autonomous or semi-autonomous workflows.
+3. Review `DESIGN.md` and adapt tokens/components if the project has a domain-specific visual language.
+4. Update `AGENTS.md` with stack-specific commands and conventions.
+5. Run `./scripts/check-agent-docs.ps1`.
+6. Complete `docs/SETUP_CHECKLIST.md`.
+7. Run `./scripts/check-agent-docs.ps1 -Strict` once placeholders are replaced.
+8. Convert `TODO.md` from starter tasks into the real working queue.
+9. Read `docs/QUALITY_RATCHET.md` and decide the first critical behavior to put under contract.
+10. Keep `ROADMAP.md` high signal: direction, milestones, known tradeoffs.
+11. Read `docs/AGENT_EXECUTION_LOOP.md`, then define the first safe agent task in `Agent State/task-queue.md`.
+12. Run `./scripts/check-agent-behavior.ps1` before relying on autonomous or semi-autonomous workflows.
 
 ## Claude Code Skill Pack
 
@@ -77,6 +79,7 @@ This template uses a canonical-contract pattern:
 
 ```text
 AGENTS.md
+  -> DESIGN.md
   -> CLAUDE.md
   -> CODEX.md
   -> GEMINI.md
@@ -84,7 +87,7 @@ AGENTS.md
   -> .cursor/rules/vibe-coding-core.mdc
 ```
 
-`AGENTS.md` owns the shared rules. The other files are adapters for specific tools. When agent behavior changes, update `AGENTS.md` first, then update the adapters and run the alignment check.
+`AGENTS.md` owns the shared build rules. `DESIGN.md` owns the shared visual and interaction contract. The other files are adapters for specific tools. When agent behavior changes, update `AGENTS.md` first, then update the adapters and run the alignment check. When visual language, component behavior, or responsive UX changes, update `DESIGN.md`.
 
 ## Planned CLI
 
@@ -106,11 +109,15 @@ agentops doctor
 Current CLI status:
 
 - `agentops check` validates the repo agent operating layer.
+- `agentops design check` validates `DESIGN.md`.
+- `agentops design tokens` exports CSS variables from `DESIGN.md`.
+- `agentops health` shows a single readiness dashboard across docs, runtime, commands, and design.
 - `agentops doctor` reports current agentic readiness and next action from `Agent State/`.
 - `agentops status`, `next`, `start`, `complete`, and `block` operate the markdown task queue.
 - `agentops maintenance` runs the first read-only autonomous maintenance check.
 - `.github/workflows/agent-maintenance.yml` schedules the read-only maintenance check weekly, supports manual runs, and uploads a JSON report artifact.
 - `agentops init` fills the main template placeholders for a real project.
+- `agentops init --mode <lite|standard|full-agentic>` records the intended operating weight for the repo.
 - `agentops sync` is still scaffolded.
 
 The current source of truth remains the Markdown template plus PowerShell checks. CLI commands should call shared validation logic rather than replacing the file-based contract with hidden state.
@@ -149,6 +156,7 @@ The current source of truth remains the Markdown template plus PowerShell checks
 +-- CLAUDE.md
 +-- CODEX.md
 +-- CONTRIBUTING.md
++-- DESIGN.md
 +-- GEMINI.md
 +-- LICENSE
 +-- README.md
@@ -160,6 +168,9 @@ The current source of truth remains the Markdown template plus PowerShell checks
 ## Operating Rhythm
 
 - Keep the project brief current enough that a new agent can become useful fast.
+- Keep `DESIGN.md` current enough that a new agent can produce coherent UI without rediscovering the visual system.
+- Use `docs/TEMPLATE_MODES.md` to choose lite, standard, or full-agentic operating weight.
+- Use `workflows/first-vertical-slice.md` before broad implementation.
 - Put temporary work in `TODO.md`; promote durable direction into `ROADMAP.md`.
 - Update `AGENTS.md` when repeated mistakes or repo-specific conventions appear.
 - Use `personas/agent-council-protocol.md` for multi-persona audits, plans, reviews, and implementation handoffs.

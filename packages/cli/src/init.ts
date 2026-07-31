@@ -14,6 +14,9 @@ export type InitOptions = {
   test: string;
   lint: string;
   build: string;
+  mode?: string;
+  desiredVibe?: string;
+  adaptDesign?: string;
 };
 
 export type InitResult = {
@@ -50,18 +53,20 @@ export function runInit(options: InitOptions): InitResult {
 
   const rootDir = resolve(options.rootDir);
   const changedFiles: string[] = [];
+  const initOptions = normalizeInitOptions(options);
 
-  updateFile(rootDir, "AGENTS.md", changedFiles, (content) => updateAgents(content, options));
-  updateFile(rootDir, "docs/PROJECT_BRIEF.md", changedFiles, (content) => updateProjectBrief(content, options));
-  updateFile(rootDir, "agentops.config.yml", changedFiles, (content) => updateConfig(content, options));
-  updateFile(rootDir, "Agent State/agent-state.md", changedFiles, (content) => updateAgentState(content, options));
-  updateFile(rootDir, "Agent State/task-queue.md", changedFiles, (content) => updateTaskQueue(content, options));
-  updateFile(rootDir, "Memory/project-facts.md", changedFiles, (content) => updateProjectFacts(content, options));
-  updateFile(rootDir, "Memory/decisions.md", changedFiles, (content) => updateDecisions(content, options));
+  updateFile(rootDir, "AGENTS.md", changedFiles, (content) => updateAgents(content, initOptions));
+  updateFile(rootDir, "docs/PROJECT_BRIEF.md", changedFiles, (content) => updateProjectBrief(content, initOptions));
+  updateFile(rootDir, "agentops.config.yml", changedFiles, (content) => updateConfig(content, initOptions));
+  updateFile(rootDir, "DESIGN.md", changedFiles, (content) => updateDesign(content, initOptions));
+  updateFile(rootDir, "Agent State/agent-state.md", changedFiles, (content) => updateAgentState(content, initOptions));
+  updateFile(rootDir, "Agent State/task-queue.md", changedFiles, (content) => updateTaskQueue(content, initOptions));
+  updateFile(rootDir, "Memory/project-facts.md", changedFiles, (content) => updateProjectFacts(content, initOptions));
+  updateFile(rootDir, "Memory/decisions.md", changedFiles, (content) => updateDecisions(content, initOptions));
 
   return {
     ok: true,
-    message: `Initialized ${options.name}.`,
+    message: `Initialized ${initOptions.name} in ${initOptions.mode} mode.`,
     changedFiles,
     missingFields: []
   };
@@ -100,10 +105,11 @@ function updateAgents(content: string, options: InitOptions): string {
 function updateProjectBrief(content: string, options: InitOptions): string {
   return content
     .replace(/TODO: What is this project in one paragraph\?/, `${options.name} is ${article(options.type)} ${options.type} for ${options.primaryUser}. ${options.goal}`)
-    .replace(/- Desired feeling: TODO/, "- Desired feeling: useful, reliable, and focused")
+    .replace(/- Desired feeling: TODO/, `- Desired feeling: ${options.desiredVibe}`)
     .replace(/- Reference products \/ experiences: TODO/, "- Reference products / experiences: TODO: add references during project setup")
     .replace(/- Anti-vibe: TODO/, "- Anti-vibe: generic, bloated, or hard to verify")
     .replace(/- First impression target: TODO/, `- First impression target: ${options.name} makes the next useful action clear.`)
+    .replace(/- Design system notes: .*/, `- Design system notes: ${options.adaptDesign}`)
     .replace(/- Primary user: TODO/, `- Primary user: ${options.primaryUser}`)
     .replace(/- Secondary users: TODO/, "- Secondary users: TODO: define if needed")
     .replace(/- User skill level: TODO/, "- User skill level: TODO: define during project setup")
@@ -115,7 +121,7 @@ function updateProjectBrief(content: string, options: InitOptions): string {
 }
 
 function updateConfig(content: string, options: InitOptions): string {
-  return content
+  let updated = content
     .replace(/name: TODO/, `name: ${yamlValue(options.name)}`)
     .replace(/type: TODO/, `type: ${yamlValue(options.type)}`)
     .replace(/stage: .*/, `stage: ${yamlValue(options.stage)}`)
@@ -125,6 +131,28 @@ function updateConfig(content: string, options: InitOptions): string {
     .replace(/test: TODO/, `test: ${yamlValue(options.test)}`)
     .replace(/lint: TODO/, `lint: ${yamlValue(options.lint)}`)
     .replace(/build: TODO/, `build: ${yamlValue(options.build)}`);
+
+  if (updated.includes("mode:")) {
+    updated = updated.replace(/mode: .*/, `mode: ${yamlValue(options.mode ?? "standard")}`);
+  } else {
+    updated = updated.replace(/primaryUser: .*/, (match) => `${match}\n  mode: ${yamlValue(options.mode ?? "standard")}`);
+  }
+
+  if (updated.includes("adaptationNotes:")) {
+    updated = updated.replace(/adaptationNotes: .*/, `adaptationNotes: ${yamlValue(options.adaptDesign ?? "")}`);
+  } else {
+    updated = updated.replace(/requireForUiWork: .*/, (match) => `${match}\n  adaptationNotes: ${yamlValue(options.adaptDesign ?? "")}`);
+  }
+
+  return updated;
+}
+
+function updateDesign(content: string, options: InitOptions): string {
+  const note = `Project adaptation note: ${options.name} starts with the default template design language. Desired feeling: ${options.desiredVibe}. ${options.adaptDesign}`;
+  if (content.includes("## Project Adaptation Notes")) {
+    return replaceSection(content, "Project Adaptation Notes", `- ${note}`);
+  }
+  return content.replace("## Known Gaps", `## Project Adaptation Notes\n\n- ${note}\n\n## Known Gaps`);
 }
 
 function updateAgentState(content: string, options: InitOptions): string {
@@ -162,9 +190,19 @@ function updateProjectFacts(content: string, options: InitOptions): string {
     `- Dev command: ${options.dev}`,
     `- Test command: ${options.test}`,
     `- Lint/type command: ${options.lint}`,
-    `- Build command: ${options.build}`
+    `- Build command: ${options.build}`,
+    `- Template mode: ${options.mode}`,
+    `- Desired vibe: ${options.desiredVibe}`,
+    `- Design adaptation: ${options.adaptDesign}`
   ].join("\n");
   return replaceSection(content, "Facts", facts);
+}
+
+function normalizeInitOptions(options: InitOptions): Required<InitOptions> {
+  const mode = options.mode?.trim() || "standard";
+  const desiredVibe = options.desiredVibe?.trim() || "useful, reliable, and focused";
+  const adaptDesign = options.adaptDesign?.trim() || "Use the default DESIGN.md until product evidence suggests a domain-specific change.";
+  return { ...options, mode, desiredVibe, adaptDesign };
 }
 
 function updateDecisions(content: string, options: InitOptions): string {

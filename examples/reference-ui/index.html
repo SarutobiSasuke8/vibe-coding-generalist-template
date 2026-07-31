@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vibe Coding Reference UI</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar" aria-label="Project navigation">
+        <div class="brand">Agentops</div>
+        <nav>
+          <a class="active" href="#">Overview</a>
+          <a href="#">Tasks</a>
+          <a href="#">Memory</a>
+          <a href="#">Quality</a>
+        </nav>
+      </aside>
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">First vertical slice</p>
+            <h1>Build the core workflow first</h1>
+          </div>
+          <button class="button-primary">Run check</button>
+        </header>
+        <section class="grid">
+          <article class="panel">
+            <div class="panel-heading">
+              <h2>Ready task</h2>
+              <span class="badge">#next</span>
+            </div>
+            <p>Implement one end-to-end path, verify it, then record the next useful action.</p>
+            <div class="actions">
+              <button class="button-secondary">Open queue</button>
+              <button class="button-icon" aria-label="More options">...</button>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading">
+              <h2>Design contract</h2>
+              <span class="badge">DESIGN.md</span>
+            </div>
+            <p>Use shared tokens, compact controls, visible focus states, and useful empty states.</p>
+            <label>
+              Project vibe
+              <input value="calm, fast, trustworthy">
+            </label>
+          </article>
+          <article class="code-panel">
+            <h2>Verification</h2>
+            <pre><code>agentops design check
+agentops health
+npm test</code></pre>
+          </article>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

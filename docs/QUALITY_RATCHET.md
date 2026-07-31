@@ -48,6 +48,25 @@ Every feature should define:
 - the fallback, empty, loading, and error states when relevant
 - any behavior future agents must not silently change
 
+## Design and UI Standard
+
+When UI, UX, visual language, or interaction behavior changes, add at least one design ratchet:
+
+- `agentops design check`
+- screenshot or browser smoke check for the changed screen
+- responsive check for mobile and desktop targets
+- accessibility check for keyboard focus, labels, and contrast
+- token or theme update in `DESIGN.md`
+- QA note using `QA/QA_REPORT_TEMPLATE.md`
+
+Design changes should preserve:
+
+- visible focus states
+- useful loading, empty, error, and success states
+- `DESIGN.md` token roles and component behavior
+- readable text and stable layout at target viewport sizes
+- the product feeling described in `docs/PROJECT_BRIEF.md`
+
 ## Agent Behavior Standard
 
 When an agent workflow is part of the product or delivery process, test behavior as behavior.
@@ -85,4 +104,3 @@ Before finishing meaningful work, answer:
 - What did we learn that future agents should inherit?
 - Did this touch an irreversible or high-risk surface?
 - Is there a new test, eval, QA artifact, or documented reason not to add one?
-

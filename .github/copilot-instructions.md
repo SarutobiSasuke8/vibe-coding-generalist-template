@@ -29,7 +29,8 @@ Follow `AGENTS.md`. This file is intentionally self-contained enough to guide Co
 - Simplicity First: avoid speculative abstractions, config, and features.
 - Surgical Changes: touch only the code needed for the requested behavior.
 - Goal-Driven Execution: suggest tests or checks with behavior changes.
-- Vibe Coding Quality Bar: keep UI suggestions polished, accessible, responsive, and aligned with the project brief.
+- Vibe Coding Quality Bar: keep UI suggestions polished, accessible, responsive, aligned with the project brief, and consistent with `DESIGN.md`.
+- For frontend suggestions, preserve `DESIGN.md` token roles, component behavior, responsive rules, and accessibility expectations.
 
 ## Tests and Verification
 

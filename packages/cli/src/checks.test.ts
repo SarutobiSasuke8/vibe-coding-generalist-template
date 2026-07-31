@@ -4,7 +4,9 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { runChecks } from "./checks.js";
+import { exportDesignTokens, runDesignCheck } from "./design.js";
 import { runDoctor } from "./doctor.js";
+import { runHealth } from "./health.js";
 import { runInit } from "./init.js";
 import { runMaintenance } from "./maintenance.js";
 import { blockTask, completeTask, getNextTask, startTask } from "./tasks.js";
@@ -100,6 +102,32 @@ test("maintenance writes JSON report artifact", () => {
   assert.equal(report.summary.taskCount, 2);
 });
 
+test("design check validates DESIGN.md and exports CSS tokens", () => {
+  const root = makeTempRepo();
+  writeMinimalValidRepo(root);
+
+  const check = runDesignCheck({ rootDir: root });
+  assert.equal(check.ok, true);
+  assert.equal(check.tokens.colors > 0, true);
+
+  const exported = exportDesignTokens({ rootDir: root, outFile: "dist/design-tokens.css" });
+  assert.equal(exported.ok, true);
+  assert.equal(existsSync(join(root, "dist", "design-tokens.css")), true);
+  assert.match(readFileSync(join(root, "dist", "design-tokens.css"), "utf8"), /--color-primary/);
+});
+
+test("health reports template dashboard items", () => {
+  const root = makeTempRepo();
+  writeMinimalValidRepo(root);
+  writeMinimalAgentRuntime(root);
+
+  const result = runHealth({ rootDir: root });
+
+  assert.equal(result.ok, true);
+  assert.ok(result.items.some((item) => item.name === "Design contract"));
+  assert.ok(result.nextActions.length > 0);
+});
+
 test("init fills core project placeholders", () => {
   const root = makeTempRepo();
   writeMinimalValidRepo(root);
@@ -118,13 +146,18 @@ test("init fills core project placeholders", () => {
     dev: "npm run dev",
     test: "npm test",
     lint: "npm run lint",
-    build: "npm run build"
+    build: "npm run build",
+    mode: "standard",
+    desiredVibe: "calm and exact",
+    adaptDesign: "Keep default DESIGN.md and favor dense recipe management screens."
   });
 
   assert.equal(result.ok, true);
   assert.ok(result.changedFiles.includes("AGENTS.md"));
   assert.match(readFileSync(join(root, "AGENTS.md"), "utf8"), /Project name: `Recipe Ledger`/);
   assert.match(readFileSync(join(root, "agentops.config.yml"), "utf8"), /name: "Recipe Ledger"/);
+  assert.match(readFileSync(join(root, "agentops.config.yml"), "utf8"), /mode: standard/);
+  assert.match(readFileSync(join(root, "DESIGN.md"), "utf8"), /Project Adaptation Notes/);
   assert.match(readFileSync(join(root, "Memory", "project-facts.md"), "utf8"), /Project name: Recipe Ledger/);
   assert.match(readFileSync(join(root, "Agent State", "task-queue.md"), "utf8"), /\[A-001\] #task Replace remaining project setup placeholders/);
 });
@@ -168,6 +201,62 @@ function writeMinimalValidRepo(root: string) {
   writeFileSync(join(root, "AGENTS.md"), agents);
   writeFileSync(join(root, "VERSION"), "0.1.0");
   writeFileSync(join(root, "agentops.config.yml"), "templateVersion: 0.1.0\n");
+  writeFileSync(
+    join(root, "DESIGN.md"),
+    [
+      "---",
+      "colors:",
+      "  primary: \"#176B5B\"",
+      "  accent: \"#3F6FD9\"",
+      "  canvas: \"#F7F8F4\"",
+      "  surface: \"#FFFFFF\"",
+      "  ink: \"#151A18\"",
+      "  body: \"#34413D\"",
+      "  muted: \"#66736F\"",
+      "  success: \"#1F7A5C\"",
+      "  warning: \"#B88418\"",
+      "  error: \"#B5473F\"",
+      "  focus: \"#3F6FD9\"",
+      "typography:",
+      "  body-md:",
+      "    fontFamily: \"Inter, sans-serif\"",
+      "    fontSize: 16px",
+      "rounded:",
+      "  md: 8px",
+      "spacing:",
+      "  md: 16px",
+      "components:",
+      "  button-primary:",
+      "    height: 40px",
+      "  button-secondary:",
+      "    height: 40px",
+      "  button-icon:",
+      "    size: 40px",
+      "  input:",
+      "    height: 40px",
+      "  panel:",
+      "    padding: 24px",
+      "  work-card:",
+      "    padding: 16px",
+      "  code-panel:",
+      "    padding: 16px",
+      "  badge:",
+      "    padding: 4px 10px",
+      "---",
+      "## Overview",
+      "## How Agents Should Use This File",
+      "Read docs/PROJECT_BRIEF.md and personas/design-director-vibe-coding.md.",
+      "## Colors",
+      "## Typography",
+      "## Layout",
+      "## Components",
+      "## Responsive Behavior",
+      "## Accessibility",
+      "## Do's and Don'ts",
+      "## Agent Prompt Guide",
+      "## Known Gaps"
+    ].join("\n")
+  );
 
   const adapter = `${"Canonical source:\nThink Before Coding\nSimplicity First\nSurgical Changes\nGoal-Driven Execution\nVibe Coding Quality Bar\n".repeat(20)}`;
   for (const file of ["CLAUDE.md", "CODEX.md", "GEMINI.md"]) {
@@ -192,11 +281,12 @@ function writeMinimalValidRepo(root: string) {
   ].join("\n");
 
   writeFileSync(join(root, "docs/PROJECT_BRIEF.md"), brief);
-  for (const file of ["ADAPTERS.md", "COMMAND_REFERENCE.md", "FAQ.md", "TEMPLATE_UPGRADE_STRATEGY.md", "WHY.md"]) {
+  for (const file of ["ADAPTERS.md", "COMMAND_REFERENCE.md", "FAQ.md", "TEMPLATE_HEALTH.md", "TEMPLATE_MODES.md", "TEMPLATE_UPGRADE_STRATEGY.md", "WHY.md"]) {
     writeFileSync(join(root, "docs", file), "# Test\n");
   }
   writeFileSync(join(root, "scripts/check-agent-docs.ps1"), "");
   writeFileSync(join(root, "workflows/README.md"), "");
+  writeFileSync(join(root, "workflows/first-vertical-slice.md"), "Metadata:\ntrigger:\ninputs:\nexpected output:\nverification:\n## Steps\n## Handoff\n");
 }
 
 function writeMinimalAgentRuntime(root: string) {
@@ -293,6 +383,10 @@ function writeInitTargets(root: string) {
       "  type: TODO",
       "  stage: prototype",
       "  primaryUser: TODO",
+      "  mode: standard",
+      "design:",
+      "  requireForUiWork: true",
+      "  adaptationNotes: \"Use the default DESIGN.md.\"",
       "commands:",
       "  install: TODO",
       "  dev: TODO",

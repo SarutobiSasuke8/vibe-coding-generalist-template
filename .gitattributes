@@ -1,0 +1,14 @@
+# Normalize all text files to LF in the repository.
+* text=auto eol=lf
+
+# Windows scripts keep CRLF on checkout.
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary assets.
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary

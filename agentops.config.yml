@@ -5,6 +5,12 @@ project:
   type: TODO
   stage: prototype
   primaryUser: TODO
+  mode: standard
+design:
+  contract: DESIGN.md
+  ownerPersona: personas/design-director-vibe-coding.md
+  requireForUiWork: true
+  adaptationNotes: "Use the default DESIGN.md until product evidence suggests a domain-specific change."
 agents:
   primary: codex
   enabled:

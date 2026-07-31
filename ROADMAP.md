@@ -8,6 +8,8 @@ Use this file for direction, milestones, and tradeoffs. Keep tactical tasks in `
 - Build the smallest useful working version.
 - Establish install, run, test, and build commands.
 - Keep agent adapters aligned with `AGENTS.md`.
+- Keep `DESIGN.md` aligned with the product's visual direction.
+- Use the first vertical slice workflow before broad feature expansion.
 - Complete the setup checklist after creating a project from the template.
 - Capture important build sessions in `Session Logs/`.
 
@@ -15,6 +17,7 @@ Use this file for direction, milestones, and tradeoffs. Keep tactical tasks in `
 
 - Improve reliability and error handling.
 - Add tests around the first important workflows.
+- Make design tokens consumable by the chosen frontend stack.
 - Prepare a simple deployment or sharing path.
 - Add project-specific agent rules only after repeated patterns prove they are needed.
 
@@ -38,5 +41,6 @@ Use this file for direction, milestones, and tradeoffs. Keep tactical tasks in `
 | Commands are missing | Verification becomes inconsistent | Fill in `AGENTS.md` during setup |
 | Scope expands too quickly | Prototype stalls | Keep `TODO.md` focused on vertical slices |
 | Agent docs drift | Different tools follow different rules | Run `./scripts/check-agent-docs.ps1` and keep adapters thin |
+| Design system drifts | Agents generate inconsistent UI across sessions | Run `agentops design check` and update `DESIGN.md` when UI rules change |
 | Starter placeholders remain too long | Agents lack concrete context and produce generic work | Run strict mode once project setup is complete |
 | Session memory stays in chat | Future agents lose decisions and rationale | Use `Session Logs/` for meaningful sessions |

@@ -73,6 +73,8 @@ For multi-step work, use:
 The product must feel intentional, cohesive, and reliable.
 
 - Protect the emotional goal in `docs/PROJECT_BRIEF.md`.
+- Use `DESIGN.md` as the visual and interaction contract for frontend work.
+- Use the Design Director persona when `DESIGN.md` needs interpretation or project-specific adaptation.
 - Build the core workflow before adding breadth.
 - Include loading, empty, and error states where they affect the experience.
 - Make copy specific and useful.

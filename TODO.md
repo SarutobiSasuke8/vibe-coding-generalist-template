@@ -12,6 +12,9 @@ Use this file for actionable project work. Keep items concrete.
 - [ ] #task Run `./scripts/check-agent-behavior.ps1` after editing the agentic runtime scaffold.
 - [ ] #task Run `./scripts/check-agent-docs.ps1 -Strict` after replacing setup placeholders.
 - [ ] #task Choose the initial stack and package manager.
+- [ ] #task Choose a template mode: `lite`, `standard`, or `full-agentic`.
+- [ ] #task Run `agentops design check` after adapting `DESIGN.md`.
+- [ ] #task Run `agentops health` after setup placeholders are replaced.
 - [ ] #task Add first runnable app or script.
 - [ ] #task Add initial verification command.
 - [ ] #task Replace starter entries in `Agent State/agent-state.md` and `Agent State/task-queue.md`.
@@ -29,5 +32,6 @@ Use this file for actionable project work. Keep items concrete.
 - [ ] #task Add a scheduled or manual maintenance workflow for reviewing `Agent State/task-queue.md`.
 - [ ] #task Add contribution or handoff notes if collaborators join.
 - [ ] #task Add project-specific Cursor, Copilot, Claude, Codex, or Gemini notes only when they differ from `AGENTS.md`.
+- [ ] #task Promote `examples/reference-ui/` into the app when a frontend project needs a quick visual baseline.
 
 ## Done

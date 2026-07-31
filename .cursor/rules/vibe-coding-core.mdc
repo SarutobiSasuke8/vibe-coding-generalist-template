@@ -24,6 +24,7 @@ Follow `AGENTS.md`. This Cursor rule is intentionally self-contained enough to g
 - Surgical Changes: keep edits scoped, preserve existing style, and avoid drive-by refactors.
 - Goal-Driven Execution: define success criteria and verify changed behavior.
 - Vibe Coding Quality Bar: protect the product feeling, responsive UI, core workflows, and polish.
+- For UI work, use `DESIGN.md` as the visual and interaction contract alongside `docs/PROJECT_BRIEF.md`.
 
 ## Cursor Behavior
 
@@ -31,6 +32,7 @@ Follow `AGENTS.md`. This Cursor rule is intentionally self-contained enough to g
 - Do not produce large rewrites unless explicitly requested.
 - Preserve comments and user-authored docs.
 - For UI changes, account for loading, empty, error, hover/focus, and responsive states where relevant.
+- Preserve `DESIGN.md` token roles and component rules unless the task explicitly adapts the design system.
 - Mention unrelated issues separately instead of silently editing them.
 - For semi-autonomous work, use `Agent State/`, `Memory/`, `docs/AGENT_EXECUTION_LOOP.md`, `docs/AGENT_TOOL_REGISTRY.md`, and `docs/AGENT_PERMISSION_GATES.md`.
 - For meaningful multi-file, architecture, debugging, or handoff-heavy work, create or append a session log in `Session Logs/` using `Templates/SESSION_LOG_TEMPLATE.md`.

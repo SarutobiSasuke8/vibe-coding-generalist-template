@@ -14,6 +14,7 @@ export type CheckResult = {
 
 const requiredFiles = [
   "AGENTS.md",
+  "DESIGN.md",
   "CLAUDE.md",
   "CODEX.md",
   "GEMINI.md",
@@ -25,9 +26,12 @@ const requiredFiles = [
   "docs/COMMAND_REFERENCE.md",
   "docs/FAQ.md",
   "docs/PROJECT_BRIEF.md",
+  "docs/TEMPLATE_HEALTH.md",
+  "docs/TEMPLATE_MODES.md",
   "docs/TEMPLATE_UPGRADE_STRATEGY.md",
   "docs/WHY.md",
   "scripts/check-agent-docs.ps1",
+  "workflows/first-vertical-slice.md",
   "workflows/README.md"
 ];
 
@@ -74,6 +78,17 @@ const projectBriefHeadings = [
   "## Quality Gates",
   "## Technical Notes",
   "## Open Questions"
+];
+
+const designSections = [
+  "## Overview",
+  "## How Agents Should Use This File",
+  "## Colors",
+  "## Typography",
+  "## Components",
+  "## Responsive Behavior",
+  "## Accessibility",
+  "## Agent Prompt Guide"
 ];
 
 const forbiddenTemplatePhrases = [
@@ -123,6 +138,20 @@ export function runChecks(options: CheckOptions): CheckResult {
     for (const heading of projectBriefHeadings) {
       if (!brief.includes(heading)) {
         errors.push(`docs/PROJECT_BRIEF.md missing required heading: ${heading}`);
+      }
+    }
+  }
+
+  if (fileExists("DESIGN.md")) {
+    const design = read("DESIGN.md");
+    for (const section of designSections) {
+      if (!design.includes(section)) {
+        errors.push(`DESIGN.md missing required section: ${section}`);
+      }
+    }
+    for (const marker of ["colors:", "typography:", "components:", "personas/design-director-vibe-coding.md"]) {
+      if (!design.includes(marker)) {
+        errors.push(`DESIGN.md missing marker: ${marker}`);
       }
     }
   }

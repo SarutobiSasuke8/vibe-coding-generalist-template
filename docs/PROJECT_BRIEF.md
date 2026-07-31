@@ -12,6 +12,7 @@ TODO: What is this project in one paragraph?
 - Reference products / experiences: TODO
 - Anti-vibe: TODO
 - First impression target: TODO
+- Design system notes: use `DESIGN.md` by default; document any product-specific departures here and in `DESIGN.md`.
 
 ## User
 
@@ -78,4 +79,3 @@ TODO: What should users be able to trust this product to do?
 ## References
 
 - TODO
-

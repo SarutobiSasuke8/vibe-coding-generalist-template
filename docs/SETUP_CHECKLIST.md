@@ -7,6 +7,8 @@ Use this after creating a new repository from this template.
 - [ ] Replace project identity fields in `AGENTS.md`.
 - [ ] Run `agentops init` when using the CLI setup path.
 - [ ] Fill in `docs/PROJECT_BRIEF.md`.
+- [ ] Review `DESIGN.md` and adapt it if the product needs a domain-specific visual language.
+- [ ] Choose a template mode from `docs/TEMPLATE_MODES.md`.
 - [ ] Replace command placeholders in `AGENTS.md`.
 - [ ] Review `docs/PERSONA_COUNCIL.md` and decide how much of the persona council to keep active.
 - [ ] Choose package manager and stack conventions.
@@ -21,6 +23,8 @@ Use this after creating a new repository from this template.
 - [ ] Create the first session log when the initial project setup is complete.
 - [ ] Run `./scripts/check-agent-docs.ps1 -Strict`.
 - [ ] Run `./scripts/check-agent-behavior.ps1`.
+- [ ] Run `agentops design check`.
+- [ ] Run `agentops health`.
 - [ ] Make the first commit.
 
 ## Recommended

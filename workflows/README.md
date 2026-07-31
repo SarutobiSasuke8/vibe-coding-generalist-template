@@ -17,6 +17,7 @@ Install only the workflows a project actually needs. The template includes commo
 
 | Workflow | Use |
 |---|---|
+| `first-vertical-slice.md` | Build the smallest coherent user-visible path before expanding scope |
 | `review.md` | Structured implementation or design review |
 | `handoff.md` | End-of-session handoff |
 | `retro.md` | Post-change or post-release retrospective |

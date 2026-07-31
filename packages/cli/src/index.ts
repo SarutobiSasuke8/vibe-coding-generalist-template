@@ -2,7 +2,9 @@
 
 import { cwd, exit } from "node:process";
 import { runChecks } from "./checks.js";
+import { exportDesignTokens, runDesignCheck } from "./design.js";
 import { runDoctor } from "./doctor.js";
+import { runHealth } from "./health.js";
 import { runInit } from "./init.js";
 import { runMaintenance } from "./maintenance.js";
 import { blockTask, completeTask, getNextTask, listTasks, loadQueue, startTask } from "./tasks.js";
@@ -66,7 +68,10 @@ Usage:
   agentops start [task-id] [--root <path>]
   agentops complete --verification <note> [--root <path>]
   agentops block --reason <note> [--root <path>]
-  agentops init --name <name> --type <type> --primary-user <user> --stage <stage> --goal <goal> --package-manager <pm> --install <cmd> --dev <cmd> --test <cmd> --lint <cmd> --build <cmd>
+  agentops init --name <name> --type <type> --primary-user <user> --stage <stage> --goal <goal> --package-manager <pm> --install <cmd> --dev <cmd> --test <cmd> --lint <cmd> --build <cmd> [--mode <lite|standard|full-agentic>] [--desired-vibe <vibe>] [--adapt-design <note>]
+  agentops design check [--json] [--root <path>]
+  agentops design tokens [--out <path>] [--root <path>]
+  agentops health [--json] [--root <path>]
   agentops sync
   agentops doctor [--json] [--root <path>]
   agentops maintenance [--json] [--no-tests] [--out <path>] [--root <path>]
@@ -80,6 +85,8 @@ Implemented:
   complete Move the active task to done with a verification note.
   block   Move the active task to blocked with a reason.
   init    Fill the main template placeholders for a real project.
+  design  Check DESIGN.md or export CSS variables from its tokens.
+  health  Show one template health dashboard across docs, runtime, commands, and design.
   maintenance Run the read-only autonomous maintenance check.
 
 Scaffolded:
@@ -132,6 +139,58 @@ if (parsed.command === "doctor") {
     console.log("Checks:");
     for (const check of result.checks) {
       console.log(`- ${check.status.toUpperCase()} ${check.name}: ${check.detail}`);
+    }
+    console.log("");
+    console.log("Next actions:");
+    for (const action of result.nextActions) {
+      console.log(`- ${action}`);
+    }
+  }
+  exit(result.ok ? 0 : 1);
+}
+
+if (parsed.command === "design") {
+  const subcommand = parsed.rest[0] ?? "check";
+  if (subcommand === "check") {
+    const result = runDesignCheck({ rootDir: parsed.rootDir });
+    if (parsed.json) {
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      console.log(`Design check: ${result.ok ? "pass" : "fail"}`);
+      console.log(`Tokens: ${result.tokens.colors} colors, ${result.tokens.typography} typography styles, ${result.tokens.components} components`);
+      for (const check of result.checks) {
+        console.log(`- ${check.status.toUpperCase()} ${check.name}: ${check.detail}`);
+      }
+    }
+    exit(result.ok ? 0 : 1);
+  }
+
+  if (subcommand === "tokens") {
+    const result = exportDesignTokens({ rootDir: parsed.rootDir, outFile: parsed.outFile });
+    if (parsed.json) {
+      console.log(JSON.stringify(result, null, 2));
+    } else if (parsed.outFile) {
+      console.log(result.message);
+    } else {
+      console.log(result.css);
+    }
+    exit(result.ok ? 0 : 1);
+  }
+
+  console.error(`Unknown design subcommand: ${subcommand}`);
+  exit(1);
+}
+
+if (parsed.command === "health") {
+  const result = runHealth({ rootDir: parsed.rootDir });
+  if (parsed.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`Template health: ${result.readiness}`);
+    console.log("");
+    console.log("Dashboard:");
+    for (const item of result.items) {
+      console.log(`- ${item.status.toUpperCase()} ${item.name}: ${item.detail}`);
     }
     console.log("");
     console.log("Next actions:");
@@ -237,7 +296,10 @@ if (parsed.command === "init") {
     dev: parsed.values.dev ?? "",
     test: parsed.values.test ?? "",
     lint: parsed.values.lint ?? "",
-    build: parsed.values.build ?? ""
+    build: parsed.values.build ?? "",
+    mode: parsed.values.mode ?? "",
+    desiredVibe: parsed.values["desired-vibe"] ?? parsed.values.desiredVibe ?? "",
+    adaptDesign: parsed.values["adapt-design"] ?? parsed.values.adaptDesign ?? ""
   });
   if (parsed.json) {
     console.log(JSON.stringify(result, null, 2));

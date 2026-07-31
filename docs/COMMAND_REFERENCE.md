@@ -51,13 +51,17 @@ agentops init \
   --dev "npm run dev" \
   --test "npm test" \
   --lint "npm run lint" \
-  --build "npm run build"
+  --build "npm run build" \
+  --mode "standard" \
+  --desired-vibe "calm, fast, and trustworthy" \
+  --adapt-design "Use the default DESIGN.md and tighten density for operational screens."
 ```
 
 The command updates:
 
 - `AGENTS.md`
 - `docs/PROJECT_BRIEF.md`
+- `DESIGN.md`
 - `agentops.config.yml`
 - `Agent State/agent-state.md`
 - `Agent State/task-queue.md`
@@ -65,6 +69,39 @@ The command updates:
 - `Memory/decisions.md`
 
 The first version is deliberately non-interactive so agents and CI can use it predictably.
+
+### `agentops design check`
+
+Validate the root `DESIGN.md` contract.
+
+```bash
+agentops design check
+agentops design check --json
+```
+
+The check verifies required design sections, core color roles, component tokens, and the links between `DESIGN.md`, `docs/PROJECT_BRIEF.md`, and the Design Director persona.
+
+### `agentops design tokens`
+
+Export CSS custom properties from `DESIGN.md`.
+
+```bash
+agentops design tokens
+agentops design tokens --out src/styles/design-tokens.css
+```
+
+Use this as the first bridge from design contract to implementation. Stack-specific token generation can be added later once the project chooses Tailwind, CSS modules, vanilla-extract, shadcn/ui, or another UI layer.
+
+### `agentops health`
+
+Show one template health dashboard.
+
+```bash
+agentops health
+agentops health --json
+```
+
+Health summarizes agent doc alignment, runtime readiness, design contract status, setup placeholders, command configuration, and session memory.
 
 ### `agentops sync`
 
